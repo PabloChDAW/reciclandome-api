@@ -58,6 +58,8 @@ class PointController extends Controller
      */
     public function destroy(Point $point)
     {
-        //
+        $point->delete();
+
+        return ['message' => 'El punto ha sido borrado.'];
     }
 }
