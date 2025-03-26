@@ -16,3 +16,5 @@ Route::get('/', function () {
 
 ### 2. CREAR CRUD
 1. Crear modelo Point con todos sus archivos asociados con `php artisan make:model Point -a --api` y añadirle el array fillable con 'longitude' y 'latitude'.
+2. En la migración de Point, crear las dos columnas añadidas y migrar con `php artisan migrate`.
+3. Definir la ruta apiResource en routes/api.php y borrar la que hicimos de prueba. Listar las rutas y comprobar que con apiResource hemos creado todas las rutas necesarias para el CRUD, incluyendo URL dinámicas para mostrar un point específico.
