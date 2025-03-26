@@ -60,4 +60,13 @@ class AuthController extends Controller
             'token' => $token->plainTextToken
         ];
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return [
+            'message' => 'Has cerrado la sesión.'
+        ];
+    }
 }

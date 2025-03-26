@@ -63,5 +63,27 @@ Veremos que crea un token hasheado. Este es el que el cliente usará para autent
     "token": "1|pVRgwxo89jSEiAN0lRumdbJScG98er1WHAycqX3Gdcae9c89"
 }
 ```
-4. Copiar las reglas de validación de register en el método login con los cambios necesarios. Capturar al usuario a través de su email con el método where (devuelve un array, así que le aplicamos first para coger al primero y así no tener un array de uno). Comprobar con un if si el usuario no existe o el password no es correcto para devolver un mensaje, y si no se ejecuta el return creamos el token para el usuario y lo devolvemos (similar a register sólo que ya tenemos el usuario, no hay que sacarlo de $request). Probar con Thunder Client por POST (http://127.0.0.1:8000/api/login con el Accept en el header y el email y password en el body). Probar con el email mal y luego el password mal para ver los mensajes de error, y luego bien para ver que registra y devuelve el token.
+4. Copiar las reglas de validación de register en el método login con los cambios necesarios. Capturar al usuario a través de su email con el método where (devuelve un array, así que le aplicamos first para coger al primero y así no tener un array de uno). Comprobar con un if si el usuario no existe o el password no es correcto para devolver un mensaje, y si no se ejecuta el return creamos el token para el usuario y lo devolvemos (similar a register sólo que ya tenemos el usuario, no hay que sacarlo de $request). Probar con Thunder Client por POST (http://127.0.0.1:8000/api/login con el Accept en el header y el email y password en el body).
+```json
+{
+    "email": "pablo@mail.com",
+    "password": "1111"
+}
+```
+Devuelve 200 OK:
+```json
+{
+    "user": {
+        "id": 1,
+        "name": "Pablo",
+        "email": "pablo@mail.com",
+        "email_verified_at": null,
+        "created_at": "2025-03-26T19:23:32.000000Z",
+        "updated_at": "2025-03-26T19:23:32.000000Z"
+    },
+    "token": "2|aOLBdtSazztA5iXHAWciO5SBtn60rMeE8sad8uS2d76fb8af"
+}
+```
+Probar con el email mal y luego el password mal para ver los mensajes de error, y luego bien para ver que registra y devuelve el token.
     - Nota: En la función register de AuthController.php, en el return, cuando devuelve el token no especifiqué que devolviera la propiedad `plainTextToken`. Eso me ha hecho volverme loco cuando me he puesto a recoger el token desde el lado cliente con React. Lo mismo me ha pasado en la función login. He tenido que añadir `plainTextToken` también.
+5. Implementar el método logout para que borre los tokens que hayan sido creados para ese usuario y devuelva un mensaje. Probar con Postman por POST (http://127.0.0.1:8000/api/logout con los mismos datos de la prueba anterior). Dará error porque no estamos comprobando si el usuario está logueado o no. Para solucionarlo, proteger la ruta del logout para que sólo sea accesible si el usuario está autenticado con el middleware auth:sanctum e incluir el token en el header (copiarlo de la prueba que hicimos para el login). Recibimos el mensaje "Has cerrado la sesión." y en la BD se han borrado los tokens de acceso.
