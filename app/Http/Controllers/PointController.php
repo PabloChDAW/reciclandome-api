@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Point;
-use App\Http\Requests\StorePointRequest;
-use App\Http\Requests\UpdatePointRequest;
+use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
@@ -13,15 +12,22 @@ class PointController extends Controller
      */
     public function index()
     {
-        //
+        return Point::all();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePointRequest $request)
+    public function store(Request $request)
     {
-        //
+        $fields = $request->validate([
+            'longitude' => 'required|numeric|min:-180|max:180',
+            'latitude' => 'required|numeric|min:-90|max:90',
+        ]);
+
+        $point = Point::create($fields);
+
+        return $point;
     }
 
     /**
@@ -29,15 +35,22 @@ class PointController extends Controller
      */
     public function show(Point $point)
     {
-        //
+        return $point;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePointRequest $request, Point $point)
+    public function update(Request $request, Point $point)
     {
-        //
+        $fields = $request->validate([
+            'longitude' => 'required|numeric|min:-180|max:180',
+            'latitude' => 'required|numeric|min:-90|max:90',
+        ]);
+
+        $point->update($fields);
+
+        return $point;
     }
 
     /**
@@ -45,6 +58,8 @@ class PointController extends Controller
      */
     public function destroy(Point $point)
     {
-        //
+        $point->delete();
+
+        return ['message' => 'El punto ha sido borrado.'];
     }
 }
