@@ -21,12 +21,14 @@ class PointController extends Controller
     public function store(Request $request)
     {
         // Para probar su funcionamiento
-        $request->validate([
+        $fields = $request->validate([
             'longitude' => 'required|numeric|min:-180|max:180',
             'latitude' => 'required|numeric|min:-90|max:90',
         ]);
 
-        return 'ok';
+        $point = Point::create($fields);
+
+        return ['point' => $point];
     }
 
     /**
