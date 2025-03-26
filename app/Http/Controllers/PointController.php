@@ -36,7 +36,7 @@ class PointController extends Controller
      */
     public function show(Point $point)
     {
-        //
+        return ['point' => $point];
     }
 
     /**
