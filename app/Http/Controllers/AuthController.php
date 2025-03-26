@@ -2,20 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     // Sólo para pruebas iniciales
-    public function register(Request $request) {
-        return 'register';
-    }
+    // public function register(Request $request) {
+    //     return 'register';
+    // }
 
-    public function login(Request $request) {
-        return 'login';
-    }
+    // public function login(Request $request) {
+    //     return 'login';
+    // }
 
-    public function logout(Request $request) {
-        return 'logout';
+    // public function logout(Request $request) {
+    //     return 'logout';
+    // }
+
+    public function register(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed'
+        ]);
+
+        $user = User::create($fields);
+
+        return $user;
     }
 }

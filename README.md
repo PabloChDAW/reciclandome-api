@@ -40,4 +40,5 @@ Para que se guarde el point al usar este método, modificarlo por el definitivo.
 ---
 ### 1. CREAR CONTROLADOR Y RUTAS DE AUTENTICACIÓN
 1. `php artisan make:controller AuthController` y definir las funciones necesarias: register, login y logout para que simplemente devuelvean un string de prueba.
-
+2. Definir las 3 rutas en routes/api.php para que devuelvan un string de prueba, listarlas y probarlas con Postman por POST con el header con key: Accept y Value: application/json.
+3. Implementar el método register para que valide los campos de entrada y luego cree al usuario y lo devuelva. Añadir HasApiTokens en el modelo User. De vuelta al método register, crear el token y en el return hacer que devuelva un array asociativo con ambas variables (user y token). Probar con Postman por POST con la propiedad Accept en el header y el JSON con las propiedades necesarias en el body (name, email, password y password_confirmation). Veremos que crea un token hasheado. Este es el que el cliente usará para autenticarse comparándolo con el guardado en la BD en la tabla personal_access_tokens.
