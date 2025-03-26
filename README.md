@@ -34,3 +34,10 @@ Para que se guarde el point al usar este método, modificarlo por el definitivo.
 6. En PointController implementar el método show para que devuelva un point concreto. Probar en Postman pasando el id del point creado anteriormente (http://127.0.0.1:8000/api/points/1 por GET).
 7. En PointController implementar el método update que será parecido al método create, excepto que actualizará de manera recursiva un point en vez de crearlo. Probar en Postman pasando el id del point creado anteriormente y modificando los datos del body (http://127.0.0.1:8000/api/points/1 por PUT).
 8. En PointController implementar el método destroy y probar borrando el point de prueba con Postman por el método DELETE (sin incluir body, claro).
+
+## PARTE 2
+[Tutorial 2/2](https://www.youtube.com/watch?v=7pCDK321ckE)
+---
+### 1. CREAR CONTROLADOR Y RUTAS DE AUTENTICACIÓN
+1. `php artisan make:controller AuthController` y definir las funciones necesarias: register, login y logout para que simplemente devuelvean un string de prueba.
+
