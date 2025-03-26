@@ -41,4 +41,27 @@ Para que se guarde el point al usar este método, modificarlo por el definitivo.
 ### 1. CREAR CONTROLADOR Y RUTAS DE AUTENTICACIÓN
 1. `php artisan make:controller AuthController` y definir las funciones necesarias: register, login y logout para que simplemente devuelvean un string de prueba.
 2. Definir las 3 rutas en routes/api.php para que devuelvan un string de prueba, listarlas y probarlas con Postman por POST con el header con key: Accept y Value: application/json.
-3. Implementar el método register para que valide los campos de entrada y luego cree al usuario y lo devuelva. Añadir HasApiTokens en el modelo User. De vuelta al método register, crear el token y en el return hacer que devuelva un array asociativo con ambas variables (user y token). Probar con Postman por POST con la propiedad Accept en el header y el JSON con las propiedades necesarias en el body (name, email, password y password_confirmation). Veremos que crea un token hasheado. Este es el que el cliente usará para autenticarse comparándolo con el guardado en la BD en la tabla personal_access_tokens.
+3. Implementar el método register para que valide los campos de entrada y luego cree al usuario y lo devuelva. Añadir HasApiTokens en el modelo User. De vuelta al método register, crear el token y en el return hacer que devuelva un array asociativo con ambas variables (user y token). Probar con Postman por POST con la propiedad Accept en el header y el JSON con las propiedades necesarias en el body (name, email, password y password_confirmation):
+```json
+{
+    "name": "Pablo",
+    "email": "pablo@mail.com",
+    "password": "1111",
+    "password_confirmation": "1111"
+}
+```
+Veremos que crea un token hasheado. Este es el que el cliente usará para autenticarse comparándolo con el guardado en la BD en la tabla personal_access_tokens:
+```json
+{
+    "user": {
+        "name": "Pablo",
+        "email": "pablo@mail.com",
+        "updated_at": "2025-03-26T19:23:32.000000Z",
+        "created_at": "2025-03-26T19:23:32.000000Z",
+        "id": 1
+    },
+    "token": "1|pVRgwxo89jSEiAN0lRumdbJScG98er1WHAycqX3Gdcae9c89"
+}
+```
+4. Copiar las reglas de validación de register en el método login con los cambios necesarios. Capturar al usuario a través de su email con el método where (devuelve un array, así que le aplicamos first para coger al primero y así no tener un array de uno). Comprobar con un if si el usuario no existe o el password no es correcto para devolver un mensaje, y si no se ejecuta el return creamos el token para el usuario y lo devolvemos (similar a register sólo que ya tenemos el usuario, no hay que sacarlo de $request). Probar con Thunder Client por POST (http://127.0.0.1:8000/api/login con el Accept en el header y el email y password en el body). Probar con el email mal y luego el password mal para ver los mensajes de error, y luego bien para ver que registra y devuelve el token.
+    - Nota: En la función register de AuthController.php, en el return, cuando devuelve el token no especifiqué que devolviera la propiedad `plainTextToken`. Eso me ha hecho volverme loco cuando me he puesto a recoger el token desde el lado cliente con React. Lo mismo me ha pasado en la función login. He tenido que añadir `plainTextToken` también.
