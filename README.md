@@ -32,3 +32,5 @@ Route::get('/', function () {
 Para que se guarde el point al usar este método, modificarlo por el definitivo.
     Nota: Ahora si ejecutamos el mismo request en Postman guardará ese point de prueba en la BD.
 6. En PointController implementar el método show para que devuelva un point concreto. Probar en Postman pasando el id del point creado anteriormente (http://127.0.0.1:8000/api/points/1 por GET).
+7. En PointController implementar el método update que será parecido al método create, excepto que actualizará de manera recursiva un point en vez de crearlo. Probar en Postman pasando el id del point creado anteriormente y modificando los datos del body (http://127.0.0.1:8000/api/points/1 por PUT).
+8. En PostController implementar el método destroy y probar borrando el post de prueba con ThunderClient por el método DELETE (sin incluir body, claro).
