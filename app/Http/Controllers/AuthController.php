@@ -29,7 +29,11 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($fields);
+        $token = $user->createToken($request->name);
 
-        return $user;
+        return [
+            'user' => $user,
+            'token' => $token->plainTextToken
+        ];
     }
 }
