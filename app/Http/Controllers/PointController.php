@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Point;
-use App\Http\Requests\StorePointRequest;
-use App\Http\Requests\UpdatePointRequest;
+use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
@@ -13,13 +12,13 @@ class PointController extends Controller
      */
     public function index()
     {
-        //
+        return Point::all();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePointRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -35,7 +34,7 @@ class PointController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePointRequest $request, Point $point)
+    public function update(Request $request, Point $point)
     {
         //
     }

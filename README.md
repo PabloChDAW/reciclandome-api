@@ -18,3 +18,5 @@ Route::get('/', function () {
 1. Crear modelo Point con todos sus archivos asociados con `php artisan make:model Point -a --api` y añadirle el array fillable con 'longitude' y 'latitude'.
 2. En la migración de Point, crear las dos columnas añadidas y migrar con `php artisan migrate`.
 3. Definir la ruta apiResource en routes/api.php y borrar la que hicimos de prueba. Listar las rutas y comprobar que con apiResource hemos creado todas las rutas necesarias para el CRUD, incluyendo URL dinámicas para mostrar un point específico.
+4. En PointController implementar el método index para que devuelva todos los points (probar en Thunder Client con http://127.0.0.1:8000/api/points por GET).
+    Nota: En vez de usar StorePointRequest y UpdatePointRequest usaremos Request (Illuminate\Http\Request), así que los cambiamos en los parámetros de los métodos del controlador y borramos el directorio Http/Requests. De esta manera usaremos Request para todo sin separar en varios ficheros.
