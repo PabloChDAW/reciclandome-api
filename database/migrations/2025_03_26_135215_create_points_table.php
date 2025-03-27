@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('points', function (Blueprint $table) {
             $table->id();
-            $table->decimal('longitude', 10, 8);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 10, 8);
             $table->timestamps();
         });
     }

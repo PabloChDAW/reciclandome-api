@@ -6,61 +6,18 @@ use App\Models\Point;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
+/**
+ * Políticas de acceso.
+ */
 class PointPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Evita que un point pueda ser manipulado por un usuario que no sea su creador.
      */
-    public function viewAny(User $user): bool
+    public function modify(User $user, Point $point): Response
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Point $point): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Point $point): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Point $point): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Point $point): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Point $point): bool
-    {
-        return false;
+        return $user->id === $point->user_id
+            ? Response::allow()
+            : Response::deny('Acceso denegado: Este punto pertenece a otro usuario.');
     }
 }

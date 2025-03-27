@@ -11,7 +11,15 @@ class Point extends Model
     use HasFactory;
 
     protected $fillable = [
-        'longitude',
         'latitude',
+        'longitude',
     ];
+
+    /**
+     * Devuelve el usuario de un punto específico.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
