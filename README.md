@@ -90,3 +90,4 @@ Probar con el email mal y luego el password mal para ver los mensajes de error, 
 
 ### 2. PROTEGER LAS RUTAS CON EL MIDDLEWARE DE SANCTUM
 1. Primero, en el modelo Point definimos la relación 1,1 con User y en User la relación 1,n con Point. Añadimos la clave ajena en la migración de Post con cascadeOnDelete para que al borrar un usuario se borren sus points.
+2. En PointController.php modificamos la función store para que en vez de crearse un point sin más, se cree el point de un usuario autenticado. Ejecutar `php artisan migrate:fresh`.

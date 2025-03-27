@@ -25,9 +25,9 @@ class PointController extends Controller
             'longitude' => 'required|numeric|min:-180|max:180',
         ]);
 
-        $point = Point::create($fields);
+        $point = $request->user()->points()->create($fields);
 
-        return $point;
+        return ['point' => $point, 'user' => $point->user];
     }
 
     /**
