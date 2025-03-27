@@ -11,7 +11,12 @@ class Point extends Model
     use HasFactory;
 
     protected $fillable = [
-        'longitude',
         'latitude',
+        'longitude',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

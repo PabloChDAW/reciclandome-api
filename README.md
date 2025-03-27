@@ -15,7 +15,7 @@ Route::get('/', function () {
 4. Para ver las rutas: `php artisan route:list`. Ver con Postman lo que devuelve la ruta creada en api.php (la primera de la lista). Para ello, `php artisan serve` y pegar en Postman la URL con el método GET, seguida de /api (http://127.0.0.1:8000/api) para ver que devuelve "API".
 
 ### 2. CREAR CRUD
-1. Crear modelo Point con todos sus archivos asociados con `php artisan make:model Point -a --api` y añadirle el array fillable con 'longitude' y 'latitude'.
+1. Crear modelo Point con todos sus archivos asociados con `php artisan make:model Point -a --api` y añadirle el array fillable con 'latitude' y 'longitude'.
 2. En la migración de Point, crear las dos columnas añadidas y migrar con `php artisan migrate`.
 3. Definir la ruta apiResource en routes/api.php y borrar la que hicimos de prueba. Listar las rutas y comprobar que con apiResource hemos creado todas las rutas necesarias para el CRUD, incluyendo URL dinámicas para mostrar un point específico.
 4. En PointController implementar el método index para que devuelva todos los points (probar en Postman con http://127.0.0.1:8000/api/points por GET).
@@ -24,8 +24,8 @@ Route::get('/', function () {
     Nota: Devolverá 404 porque no hemos puesto el header. Siempre es necesario este header: Key: Accept. Value: application/json. Entonces devolverá 422 porque no ha pasado las validaciones. Añadir un body con un JSON (raw) que pase las validaciones (required):
     ```json
     {
-        "longitude": -4.77275,
-        "latitude": 37.89155
+        "latitude": 37.89155,
+        "longitude": -4.77275
     }
     ```
      y devolverá un 200 con nuestro "OK".
@@ -87,3 +87,6 @@ Devuelve 200 OK:
 Probar con el email mal y luego el password mal para ver los mensajes de error, y luego bien para ver que registra y devuelve el token.
     - Nota: En la función register de AuthController.php, en el return, cuando devuelve el token no especifiqué que devolviera la propiedad `plainTextToken`. Eso me ha hecho volverme loco cuando me he puesto a recoger el token desde el lado cliente con React. Lo mismo me ha pasado en la función login. He tenido que añadir `plainTextToken` también.
 5. Implementar el método logout para que borre los tokens que hayan sido creados para ese usuario y devuelva un mensaje. Probar con Postman por POST (http://127.0.0.1:8000/api/logout con los mismos datos de la prueba anterior). Dará error porque no estamos comprobando si el usuario está logueado o no. Para solucionarlo, proteger la ruta del logout para que sólo sea accesible si el usuario está autenticado con el middleware auth:sanctum e incluir el token en el header (copiarlo de la prueba que hicimos para el login). Recibimos el mensaje "Has cerrado la sesión." y en la BD se han borrado los tokens de acceso.
+
+### 2. PROTEGER LAS RUTAS CON EL MIDDLEWARE DE SANCTUM
+1. Primero, en el modelo Point definimos la relación 1,1 con User y en User la relación 1,n con Point. Añadimos la clave ajena en la migración de Post con cascadeOnDelete para que al borrar un usuario se borren sus points.
