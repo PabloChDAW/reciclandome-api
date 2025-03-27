@@ -6,6 +6,7 @@ use App\Models\Point;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
 class PointController extends Controller implements HasMiddleware
 {
@@ -52,6 +53,9 @@ class PointController extends Controller implements HasMiddleware
      */
     public function update(Request $request, Point $point)
     {
+        // Aplica la política de acceso.
+        Gate::authorize('modify', $point);
+
         $fields = $request->validate([
             'longitude' => 'required|numeric|min:-180|max:180',
             'latitude' => 'required|numeric|min:-90|max:90',
@@ -67,6 +71,9 @@ class PointController extends Controller implements HasMiddleware
      */
     public function destroy(Point $point)
     {
+        // Aplica la política de acceso.
+        Gate::authorize('modify', $point);
+
         $point->delete();
 
         return ['message' => 'El punto ha sido borrado.'];
