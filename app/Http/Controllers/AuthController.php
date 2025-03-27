@@ -8,19 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Sólo para pruebas iniciales
-    // public function register(Request $request) {
-    //     return 'register';
-    // }
-
-    // public function login(Request $request) {
-    //     return 'login';
-    // }
-
-    // public function logout(Request $request) {
-    //     return 'logout';
-    // }
-
+    /**
+     * Registro de usuario con creación de Bearer Token y validaciones.
+     */
     public function register(Request $request)
     {
         $fields = $request->validate([
@@ -38,6 +28,9 @@ class AuthController extends Controller
         ];
     }
 
+    /**
+     * Login de usuario con autenticación.
+     */
     public function login(Request $request)
     {
         $fields = $request->validate([
@@ -60,6 +53,7 @@ class AuthController extends Controller
             'token' => $token->plainTextToken
         ];
     }
+
 
     public function logout(Request $request)
     {

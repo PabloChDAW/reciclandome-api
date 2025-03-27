@@ -18,7 +18,7 @@ class PointController extends Controller implements HasMiddleware
     }
 
     /**
-     * Display a listing of the resource.
+     * Muestra todos los puntos almacenados en la base de datos.
      */
     public function index()
     {
@@ -26,7 +26,7 @@ class PointController extends Controller implements HasMiddleware
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo punto asociado a un usuario.
      */
     public function store(Request $request)
     {
@@ -41,7 +41,7 @@ class PointController extends Controller implements HasMiddleware
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los datos de un punto específico.
      */
     public function show(Point $point)
     {
@@ -49,7 +49,9 @@ class PointController extends Controller implements HasMiddleware
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un punto específico.
+     * Aplica políticas de acceso para que el punto sólo pueda ser
+     * modificado por el usuario que lo creó.
      */
     public function update(Request $request, Point $point)
     {
@@ -67,7 +69,9 @@ class PointController extends Controller implements HasMiddleware
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un punto específico.
+     * Aplica políticas de acceso para que el punto sólo pueda ser
+     * eliminado por el usuario que lo creó.
      */
     public function destroy(Point $point)
     {
@@ -76,6 +80,6 @@ class PointController extends Controller implements HasMiddleware
 
         $point->delete();
 
-        return ['message' => 'El punto ha sido borrado.'];
+        return ['message' => 'El punto ha sido eliminado.'];
     }
 }

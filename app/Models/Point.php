@@ -15,6 +15,9 @@ class Point extends Model
         'longitude',
     ];
 
+    /**
+     * Devuelve el usuario de un punto específico.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);

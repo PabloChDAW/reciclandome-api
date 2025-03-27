@@ -6,6 +6,9 @@ use App\Models\Point;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
+/**
+ * Políticas de acceso.
+ */
 class PointPolicy
 {
     /**

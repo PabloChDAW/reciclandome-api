@@ -47,6 +47,9 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Devuelve los puntos asociados a un usuario específico.
+     */
     public function points()
     {
         return $this->hasMany(Point::class);

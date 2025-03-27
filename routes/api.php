@@ -5,11 +5,11 @@ use App\Http\Controllers\PointController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-// Las rutas necesarias para un CRUD completo (comprobar con `php artisan route:list`)
+// Las rutas necesarias para un CRUD completo (listarlas con `php artisan route:list`)
 Route::apiResource('points', PointController::class);
 
 // Rutas para la autenticación con Sanctum
