@@ -22,7 +22,7 @@ class PointController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        return Point::all();
+        return Point::with('user')->latest()->get();
     }
 
     /**
@@ -45,7 +45,7 @@ class PointController extends Controller implements HasMiddleware
      */
     public function show(Point $point)
     {
-        return $point;
+        return ['point' => $point, 'user' => $point->user];
     }
 
     /**
@@ -65,7 +65,7 @@ class PointController extends Controller implements HasMiddleware
 
         $point->update($fields);
 
-        return $point;
+        return ['point' => $point, 'user' => $point->user];
     }
 
     /**
