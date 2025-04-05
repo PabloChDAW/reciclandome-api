@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+//use Carbon\Carbon;
 class AuthController extends Controller
 {
     /**
@@ -21,7 +22,8 @@ class AuthController extends Controller
 
         $user = User::create($fields);
         $token = $user->createToken($request->name);
-
+        //$token = $user->createToken($request->name,[60],Carbon::now()->addMinutes(1));
+        
         return [
             'user' => $user,
             'token' => $token->plainTextToken
