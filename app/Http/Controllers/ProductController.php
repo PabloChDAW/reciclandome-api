@@ -13,13 +13,11 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    // Mostrar formulario para crear producto (opcional en API)
     public function create()
     {
         //
     }
 
-    // Guardar nuevo producto
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,19 +31,16 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
 
-    // Mostrar un producto específico
     public function show(Product $product)
     {
         return response()->json($product);
     }
 
-    // Mostrar formulario para editar producto (opcional en API)
     public function edit(Product $product)
     {
         //
     }
 
-    // Actualizar producto
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
@@ -59,7 +54,6 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    // Eliminar producto
     public function destroy(Product $product)
     {
         $product->delete();
