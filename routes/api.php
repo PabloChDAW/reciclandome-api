@@ -5,6 +5,7 @@ use App\Http\Controllers\PointController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
@@ -33,3 +34,7 @@ Route::post('/test', function () {
 
 Route::apiResource('products', ProductController::class); // Para API
 // Route::resource('products', ProductController::class); // Para web
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('orders', OrderController::class);
+});
