@@ -14,5 +14,16 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'stock',
     ];
+
+    /**
+     * Devuelve los pedidos de un producto específico.
+     */
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class);
+    }
 }
+
+

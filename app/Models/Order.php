@@ -13,10 +13,22 @@ class Order extends Model
         'user_id',
         'total',
         'status',
+        'address',
     ];
 
+    /**
+     * Devuelve el usuario de un pedido específico.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Devuelve los productos de un pedido específico.
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
     }
 }

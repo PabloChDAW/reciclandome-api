@@ -27,14 +27,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::post('/test', function () {
-    return response()->json(['message' => 'Test route is working!']);
-});
+// Las rutas necesarias para un CRUD de productos
+Route::apiResource('products', ProductController::class);
 
-
-Route::apiResource('products', ProductController::class); // Para API
-// Route::resource('products', ProductController::class); // Para web
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('orders', OrderController::class);
-});
+// Las rutas necesarias para un CRUD de pedidos
+Route::apiResource('orders', ProductController::class);
