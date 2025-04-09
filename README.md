@@ -96,3 +96,9 @@ Probar con el email mal y luego el password mal para ver los mensajes de error, 
     Nota: Es muy importante que ésta política sea implementada en el servidor, ya que el cliente es fácilmente manipulable.
 5. Si se desea, definir una fecha de expiración para los tokens (por defecto no expiran nunca) en config/sanctum.php cambiando el valor null por un número de minutos.
 6. Por último, volver a habilitar la ruta que comentamos al principio en api.php descomentándola para usarla desde el front que vamos a crear a continuación. Probarla con Postman (http://127.0.0.1:8000/api/user) con la propiedad Accept en el header. Recibimos el mensaje "Unauthenticated". Volver a hacerlo añadiendo el token de uno de los usuarios que tengamos en la BD para recibir el 200 OK. La autenticación funciona.
+
+## NOTAS ADICIONALES
+
+
+## TODO
+- Elaborar necesidades futuras del proyecto
