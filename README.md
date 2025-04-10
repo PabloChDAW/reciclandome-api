@@ -101,4 +101,29 @@ Probar con el email mal y luego el password mal para ver los mensajes de error, 
 
 
 ## TODO
-- Elaborar necesidades futuras del proyecto
+
+
+
+- 
+## TODO
+
+### PRIORIDAD HIGH
+- Mejorar el diagrama E/r (Pablo)
+- Controlador de productos (Suárez)
+- Controlador de pedidos (Suárez)
+- Humanizar texto documentación (Rafa) 
+
+### PRIORIDAD MEDIUM
+- Campos de puntos (Pablo)
+- Relación de a muchos entre producto y pedido (Pablo)
+- Relación de a muchos entre punto y tipo (Pablo)
+- Documentación de overleaf. Añadir conceptos técnicos y gráficos (Suárez)
+- End Point de puntos por usuario (Rafa/Suárez)
+
+### PRIORIDAD LOW
+- Factoría de tipos de puntos (Pablo)
+- Validación de puntos creados por usuarios no admins
+
+
+
+
