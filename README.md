@@ -123,7 +123,9 @@ Probar con el email mal y luego el password mal para ver los mensajes de error, 
 ### PRIORIDAD LOW
 - Factoría de tipos de puntos (Pablo)
 - Validación de puntos creados por usuarios no admins
-
+- Validar que las ubicaciones introducidas por el usuario tienen coordenadas en el rango adecuado 
+(+-90 y +-180)
+- Implementar en la BBDD una tabla de peticiones
 
 
 
