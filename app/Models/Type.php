@@ -15,4 +15,12 @@ class Type extends Model
         'description',
         'icon',
     ];
+
+    /**
+     * Devuelve los puntos de un de un tipo (de basura reciclable) específico.
+     */
+    public function points()
+    {
+        return $this->belongsToMany(Point::class);
+    }
 }

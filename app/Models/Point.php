@@ -27,4 +27,12 @@ class Point extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Devuelve los tipos (de basura reciclable) de un punto específico.
+     */
+    public function types()
+    {
+        return $this->belongsToMany(Type::class);
+    }
 }
