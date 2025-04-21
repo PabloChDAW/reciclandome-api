@@ -15,4 +15,12 @@ class Order extends Model
         'status',
         'address',
     ];
+
+    /**
+     * Devuelve el usuario de un pedido específico.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
