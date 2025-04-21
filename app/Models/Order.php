@@ -23,4 +23,12 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Devuelve los productos de un pedido específico.
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }
