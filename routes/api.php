@@ -5,6 +5,12 @@ use App\Http\Controllers\PointController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderProductController;
+use App\Http\Controllers\OrderController;
+
+
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -16,3 +22,12 @@ Route::apiResource('points', PointController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+//Ruta para el ProductController:
+
+Route::apiResource('products', ProductController::class);
+
+//Ruta para el orderController
+
+Route::apiResource('orders', OrderController::class);
