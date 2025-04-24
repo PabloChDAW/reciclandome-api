@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('points', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 10, 8);
-            $table->string('city');
+            $table->decimal('total');
+            $table->string('status');
             $table->string('address');
-            $table->string('telephone');
-            $table->string('email');
-            $table->string('url');
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('points');
+        Schema::dropIfExists('orders');
     }
 };

@@ -5,23 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Point extends Model
+class Order extends Model
 {
     /** @use HasFactory<\Database\Factories\PointFactory> */
     use HasFactory;
 
     protected $fillable = [
-        'latitude',
-        'longitude',
-        'city',
+        'total',
+        'status',
         'address',
-        'telephone',
-        'email',
-        'url',
     ];
 
     /**
-     * Devuelve el usuario de un punto específico.
+     * Devuelve el usuario de un pedido específico.
      */
     public function user()
     {
@@ -29,10 +25,10 @@ class Point extends Model
     }
 
     /**
-     * Devuelve los tipos (de basura reciclable) de un punto específico.
+     * Devuelve los productos de un pedido específico.
      */
-    public function types()
+    public function products()
     {
-        return $this->belongsToMany(Type::class);
+        return $this->belongsToMany(Product::class);
     }
 }
