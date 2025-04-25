@@ -1,8 +1,41 @@
 # API REST CON AUTENTICACIÓN USANDO SANCTUM - reciclando.me
 
-## PARTE 1
-Este proceso abarca todo lo relacionado con autenticación de usuarios, autorización y un CRUD básico de copordenadas para implementar una API que luego crecerá en funcionalidad.
----
+## PRUEBAS CON POSTMAN (EJEMPLOS)
+Ejecutar `php artisan serve` para levantar un servicio local de pruebas en http://127.0.0.1:8000
+
+### REGISTRAR UN USUARIO
+- Método: POST
+- URI: http://127.0.0.1:8000/api/register
+- Headers:
+    key: Accept
+    Value: application/json
+- Body (JSON): 
+    ```json
+    {
+        "name": "John Doe",
+        "email": "johndoe@mail.com",
+        "password": "1111",
+        "password_confirmation": "1111"
+    }
+    ```
+- Respuesta (200 OK):
+    ```json
+    {
+        "user": {
+            "name": "John Doe",
+            "email": "johndoe@mail.com",
+            "updated_at": "2025-04-25T11:47:05.000000Z",
+            "created_at": "2025-04-25T11:47:05.000000Z",
+            "id": 1
+        },
+        "token": "1|1jOdDRS62hbGrHSkyFFPI7eL3hVEFR0k8T01GQlh4222a483"
+    }
+    ```
+
+
+
+## DESARROLLO: PARTE 1
+
 ### 1.  CREAR PROYECTO
 1. `laravel new api-crud-sanctum` -> `breeze` -> `api` -> etc.
 2. Comentar la ruta que hay inicialmente en routes/api.php (la del middleware sanctum) y crear debajo una ruta que devuelve 'API' para probarla:
@@ -35,9 +68,9 @@ Para que se guarde el point al usar este método, modificarlo por el definitivo.
 7. En PointController implementar el método update que será parecido al método create, excepto que actualizará de manera recursiva un point en vez de crearlo. Probar en Postman pasando el id del point creado anteriormente y modificando los datos del body (http://127.0.0.1:8000/api/points/1 por PUT).
 8. En PointController implementar el método destroy y probar borrando el point de prueba con Postman por el método DELETE (sin incluir body, claro).
 
-## PARTE 2
-[Tutorial 2/2](https://www.youtube.com/watch?v=7pCDK321ckE)
----
+
+## DESARROLLO: PARTE 2
+
 ### 1. CREAR CONTROLADOR Y RUTAS DE AUTENTICACIÓN
 1. `php artisan make:controller AuthController` y definir las funciones necesarias: register, login y logout para que simplemente devuelvean un string de prueba.
 2. Definir las 3 rutas en routes/api.php para que devuelvan un string de prueba, listarlas y probarlas con Postman por POST con el header con key: Accept y Value: application/json.
@@ -96,3 +129,5 @@ Probar con el email mal y luego el password mal para ver los mensajes de error, 
     Nota: Es muy importante que ésta política sea implementada en el servidor, ya que el cliente es fácilmente manipulable.
 5. Si se desea, definir una fecha de expiración para los tokens (por defecto no expiran nunca) en config/sanctum.php cambiando el valor null por un número de minutos.
 6. Por último, volver a habilitar la ruta que comentamos al principio en api.php descomentándola para usarla desde el front que vamos a crear a continuación. Probarla con Postman (http://127.0.0.1:8000/api/user) con la propiedad Accept en el header. Recibimos el mensaje "Unauthenticated". Volver a hacerlo añadiendo el token de uno de los usuarios que tengamos en la BD para recibir el 200 OK. La autenticación funciona.
+
+    Nota: Se han añadido nuevas funcionalidades y propiedades a los objetos JSON (Ver PRUEBAS CON POSTMAN).
