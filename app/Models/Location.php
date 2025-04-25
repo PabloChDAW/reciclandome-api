@@ -6,5 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    //
+    protected $fillable = [
+        'area',
+        'user_id',
+        'street',
+        'building',
+    ];
+
+    /**
+     * Cada ubicación está asociada a un usuario.
+     */
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
