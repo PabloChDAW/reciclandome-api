@@ -54,4 +54,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Point::class);
     }
+    //Pablo, te he tenido que modificar este modelo porque me hacía falta un método para conseguir todos los pedidos
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
