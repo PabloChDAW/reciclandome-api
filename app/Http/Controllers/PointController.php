@@ -17,22 +17,22 @@ class PointController extends Controller implements HasMiddleware
         ];
     }
 
-    /**
-     * Muestra todos los puntos almacenados en la base de datos.
-     */
     public function index()
     {
         return Point::with('user')->latest()->get();
     }
 
-    /**
-     * Almacena un nuevo punto asociado a un usuario.
-     */
+
     public function store(Request $request)
     {
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
+            'city' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'url' => 'nullable|url|max:255',
         ]);
 
         $point = $request->user()->points()->create($fields);
@@ -40,27 +40,26 @@ class PointController extends Controller implements HasMiddleware
         return ['point' => $point, 'user' => $point->user];
     }
 
-    /**
-     * Muestra los datos de un punto específico.
-     */
+
     public function show(Point $point)
     {
         return ['point' => $point, 'user' => $point->user];
     }
 
-    /**
-     * Actualiza los datos de un punto específico.
-     * Aplica políticas de acceso para que el punto sólo pueda ser
-     * modificado por el usuario que lo creó.
-     */
+
     public function update(Request $request, Point $point)
     {
         // Aplica la política de acceso.
         Gate::authorize('modify', $point);
 
         $fields = $request->validate([
-            'longitude' => 'required|numeric|min:-180|max:180',
             'latitude' => 'required|numeric|min:-90|max:90',
+            'longitude' => 'required|numeric|min:-180|max:180',
+            'city' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'url' => 'nullable|url|max:255',
         ]);
 
         $point->update($fields);
@@ -68,14 +67,9 @@ class PointController extends Controller implements HasMiddleware
         return ['point' => $point, 'user' => $point->user];
     }
 
-    /**
-     * Elimina un punto específico.
-     * Aplica políticas de acceso para que el punto sólo pueda ser
-     * eliminado por el usuario que lo creó.
-     */
+
     public function destroy(Point $point)
     {
-        // Aplica la política de acceso.
         Gate::authorize('modify', $point);
 
         $point->delete();

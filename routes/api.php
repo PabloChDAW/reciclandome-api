@@ -28,6 +28,4 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::apiResource('products', ProductController::class);
 
-//Ruta para el orderController
 
-Route::apiResource('orders', OrderController::class);
