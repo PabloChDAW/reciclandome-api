@@ -22,6 +22,8 @@ class LocationController extends Controller
             'area' => $request->area,
             'user_id' => Auth::id(),
         ]);
+
+        return response()->json('Dirección añadida con éxito.', 201);
     }
 
     public function update(Request $request, $id)
@@ -33,9 +35,29 @@ class LocationController extends Controller
         ]);
 
         $location = Location::find($id);
-        $location->street = $request->street;
-        $location->building = $request->building;
-        $location->area = $request->area;
-        $location->save();
+
+        if ($location) {
+            $location->street = $request->street;
+            $location->building = $request->building;
+            $location->area = $request->area;
+            $location->save();
+
+            return response()->json('Dirección actualizada con éxito.');
+        } else {
+            return response()->json('La dirección no ha sido encontrada.');
+        }
+
+    }
+
+    public function destroy($id){
+        $location = Location::find($id);
+
+        if ($location) {
+            $location->delete();
+
+            return response()->json('Dirección eliminada con éxito.');
+        } else {
+            return response()->json('La dirección no ha sido encontrada.');
+        }
     }
 }
