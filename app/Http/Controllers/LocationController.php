@@ -23,4 +23,19 @@ class LocationController extends Controller
             'user_id' => Auth::id(),
         ]);
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'street' => 'required',
+            'building' => 'required',
+            'area' => 'required',
+        ]);
+
+        $location = Location::find($id);
+        $location->street = $request->street;
+        $location->building = $request->building;
+        $location->area = $request->area;
+        $location->save();
+    }
 }
