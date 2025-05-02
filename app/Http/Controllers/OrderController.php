@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -11,6 +12,9 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 class OrderController extends Controller implements HasMiddleware
 {
+
+
+    //TODO Hacer un método que devuelva un JSON con order y sus productos
 
     public static function middleware()
     {
@@ -44,16 +48,17 @@ class OrderController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'total' => 'required|numeric',
             'address' => 'required|string|max:255',
         ]);
 
         $validated['status'] = 'pending';
-
+        $validated['total'] = 0;
 
         $order = $request->user()->orders()->create($validated);
+        $orderWithUser = Order::with('user')->find($order->id);
 
-        return ['order' => $order, 'user' => $order->user];
+
+        return ['order' => $orderWithUser];
         }
 
     /**
@@ -62,7 +67,7 @@ class OrderController extends Controller implements HasMiddleware
     public function updateProductsInOrder(Request $request, $id)
 {
     $validated = $request->validate([
-        'products' => 'required|array', 
+        'products' => 'required|array',
         'products.*.product_id' => 'required|exists:products,id', 
     ]);
 
@@ -79,9 +84,15 @@ class OrderController extends Controller implements HasMiddleware
     // Eliminar todos los productos del pedido 
     $order->products()->detach();
 
+    $total = 0;
+
     foreach ($validated['products'] as $productData) {
+        $price = Product::where("id", $productData['product_id'])->first()?->price;
+        $total = $total + $price;
         $order->products()->attach($productData['product_id']);
     }
+    $order -> total = $total;
+    $order ->save();
 
     return response()->json(['message' => 'Productos actualizados correctamente en el pedido.', 'order' => $order]);
 }
