@@ -22,6 +22,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
+            'image' => 'required|string',
         ]);
 
         $product = Product::create($validated);
@@ -29,7 +30,7 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
 
-    //Mostar todos los productos
+    //Mostar un producto específico
     public function show(Product $product)
     {
         return response()->json($product, 200);
@@ -43,6 +44,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
+            'image' => 'required|string',
         ]);
 
         $product->update($validated);
