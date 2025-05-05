@@ -14,7 +14,7 @@ class OrderController extends Controller implements HasMiddleware
 {
 
 
-    //TODO Hacer un método que devuelva un JSON con order y sus productos
+    //TODO Hacer un método que devuelva un JSON con order y sus productos ESTÁ
 
     public static function middleware()
     {
@@ -24,7 +24,7 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Mostrar todos los pedidos del usuario autenticado.
+     * Mostrar todos los pedidos del usuario autenticado. ESTÁ
      */
     public function index()
     {
@@ -34,16 +34,16 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Mostrar un pedido específico del usuario autenticado.
+     * Mostrar un pedido específico del usuario autenticado. ESTÁ
      */
     public function show(Order $order)
     {
-        return ['order' => $order, 'user' => $order->user];
-
+        $orderWithUser = Order::with('user')->find($order->id);
+        return ['order' => $orderWithUser];
     }
 
     /**
-     * Crear un nuevo pedido para el usuario autenticado.
+     * Crear un nuevo pedido para el usuario autenticado. ESTÁ
      */
     public function store(Request $request)
     {
@@ -58,50 +58,53 @@ class OrderController extends Controller implements HasMiddleware
         $orderWithUser = Order::with('user')->find($order->id);
 
 
+        // 2 cosas
+        // Método UpdateProductsInOrder: Resta el stock de los productos porque ingresamos un nuevo producto en order y se valida que haya stock (stock -1)
+        // Método UpdateStatus: Cuando se ejecute restar el n de productos que haya (restar stock)
+
         return ['order' => $orderWithUser];
-        }
+    }
 
     /**
-     * Actualizar un pedido del usuario autenticado.
+     * Actualizar un pedido del usuario autenticado. ESTÁ
      */
     public function updateProductsInOrder(Request $request, $id)
-{
-    $validated = $request->validate([
-        'products' => 'required|array',
-        'products.*.product_id' => 'required|exists:products,id', 
-    ]);
+    {
+        $validated = $request->validate([
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+        ]);
 
-    $order = Order::find($id);
+        $order = Order::find($id);
 
-    if (!$order) {
-        return response()->json(['error' => 'Pedido no encontrado.'], 404);
+        if (!$order) {
+            return response()->json(['error' => 'Pedido no encontrado.'], 404);
+        }
+
+        if ($order->user_id !== Auth::id()) {
+            return response()->json(['error' => 'No tienes permiso para modificar este pedido.'], 403);
+        }
+
+        // Eliminar todos los productos del pedido 
+        $order->products()->detach();
+
+        $total = 0;
+
+        foreach ($validated['products'] as $productData) {
+            $price = Product::where("id", $productData['product_id'])->first()?->price;
+            $total = $total + $price;
+            $order->products()->attach($productData['product_id']);
+        }
+        $order->total = $total;
+        $order->save();
+
+        return response()->json(['message' => 'Productos actualizados correctamente en el pedido.', 'order' => $order]);
     }
 
-    if ($order->user_id !== Auth::id()) {
-        return response()->json(['error' => 'No tienes permiso para modificar este pedido.'], 403);
-    }
-
-    // Eliminar todos los productos del pedido 
-    $order->products()->detach();
-
-    $total = 0;
-
-    foreach ($validated['products'] as $productData) {
-        $price = Product::where("id", $productData['product_id'])->first()?->price;
-        $total = $total + $price;
-        $order->products()->attach($productData['product_id']);
-    }
-    $order -> total = $total;
-    $order ->save();
-
-    return response()->json(['message' => 'Productos actualizados correctamente en el pedido.', 'order' => $order]);
-}
-
-    //funcion para modificar los pedidos a "Completed"
+    //funcion para modificar los pedidos a "Completed". ESTÁ
     public function updateStatus($id)
     {
         $order = Order::find($id);
-
 
         if (!$order) {
             return response()->json(['error' => 'Pedido no encontrado.'], 404);
@@ -117,7 +120,7 @@ class OrderController extends Controller implements HasMiddleware
         return response()->json(['message' => 'Estado del pedido actualizado correctamente.', 'order' => $order]);
     }
     /**
-     * Eliminar un pedido del usuario autenticado.
+     * Eliminar un pedido del usuario autenticado. ESTÁ
      */
     public function destroy(Order $order)
     {
@@ -127,6 +130,4 @@ class OrderController extends Controller implements HasMiddleware
 
         return ['message' => 'El pedido ha sido eliminado.'];
     }
-
-    
 }

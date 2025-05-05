@@ -21,7 +21,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'stock' => 'required|integer|min:0|max:999',
             'image' => 'required|string',
         ]);
 
@@ -43,7 +43,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'stock' => 'required|integer|min:0|max:999',
             'image' => 'required|string',
         ]);
 
@@ -54,12 +54,11 @@ class ProductController extends Controller
 
     //Borrar un producto específico
     public function destroy(Product $product)
-{
-    $product->delete();
+    {
+        $product->delete();
 
-    return response()->json([
-        'message' => 'Producto eliminado correctamente.'
-    ], 200);
-}
-
+        return response()->json([
+            'message' => 'Producto eliminado correctamente.'
+        ], 200);
+    }
 }
