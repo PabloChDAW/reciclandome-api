@@ -33,6 +33,14 @@ class PointController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
+            //'city' => 'required|string|max:255', Se puede extraer con geocodificación inversa de maptiler
+            //'address' => 'required|string|max:255', Se puede extraer con geocodificación inversa de maptiler
+            //'telephone' => 'sometimes|nullable|string|max:20', Debería ser el del usuario
+            //'email' => 'sometimes|nullable|email|max:255', Debería ser el del usuario
+            //'url' => 'sometimes|nullable|url|max:255', La Url del punto se puede generar con una función y/o concatenando
+            //TODO Implementar esto en el front, pero mientras tanto para que funcione:
+
+            
         ]);
         $fields['city'] = 'sanpitopato';
         $fields['address'] = 'sanpitopato';
@@ -42,7 +50,7 @@ class PointController extends Controller implements HasMiddleware
         $fields['url'] = 'sanpitopato';
         $point = $request->user()->points()->create($fields);
 
-        return ['point' => $point, 'user' => $point->user];
+        return response()->json(['point' => $point, 'user' => $point->user], 201);
     }
 
     /**
