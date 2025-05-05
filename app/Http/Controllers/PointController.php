@@ -34,7 +34,12 @@ class PointController extends Controller implements HasMiddleware
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
         ]);
-
+        $fields['city'] = 'sanpitopato';
+        $fields['address'] = 'sanpitopato';
+        $fields['address'] = 'sanpitopato';
+        $fields['telephone'] = 'sanpitopato';
+        $fields['email'] = 'sanpitopato@sanp.com';
+        $fields['url'] = 'sanpitopato';
         $point = $request->user()->points()->create($fields);
 
         return ['point' => $point, 'user' => $point->user];
