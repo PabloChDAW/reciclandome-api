@@ -22,10 +22,10 @@ return new class extends Migration
 
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')
-                ->references('id')
-                ->on('products')
-                ->unUpdate('cascade')
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on('products')
+                  ->unUpdate('cascade')
+                  ->onDelete('cascade');
 
             $table->integer('quantity');
 

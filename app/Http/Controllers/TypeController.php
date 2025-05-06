@@ -6,6 +6,7 @@ use App\Models\Type;
 use App\Models\Point;
 use Illuminate\Http\Request;
 
+// TODO Terminar este controlador.
 class TypeController extends Controller
 {
 

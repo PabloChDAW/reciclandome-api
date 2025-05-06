@@ -12,7 +12,6 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 class OrderController extends Controller implements HasMiddleware
 {
-    // Hacer un método que devuelva un JSON con order y sus productos ESTÁ
     public static function middleware()
     {
         return [
@@ -21,7 +20,7 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Mostrar todos los pedidos del usuario autenticado. ESTÁ
+     * Mostrar todos los pedidos del usuario autenticado.
      */
     public function index()
     {
@@ -31,18 +30,20 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Mostrar un pedido específico del usuario autenticado. ESTÁ
+     * Mostrar un pedido específico del usuario autenticado.
      */
     public function show(Order $order)
     {
         $orderWithUser = Order::with('user')->find($order->id);
+
         return ['order' => $orderWithUser];
     }
 
     /**
      * Crear un nuevo pedido para el usuario autenticado.
      * Al crearse se pedirá la dirección de envío y se guardará un pedido
-     * vacío. ESTÁ
+     * vacío.
+     * TODO Verificar que el precio total es correcto.
      */
     public function store(Request $request)
     {
@@ -59,9 +60,11 @@ class OrderController extends Controller implements HasMiddleware
         $total = 0;
         foreach ($validated['products'] as $productData) {
             $product = Product::where("id", $productData['product_id'])->first();
+            
             if($product == null){
                 return response()->json(['error' => 'El producto no existe'], 404);
             }
+
             $price = $product->price;
             $stock = $product->stock;
             $quantity = $productData['quantity'];
@@ -69,6 +72,7 @@ class OrderController extends Controller implements HasMiddleware
             if($stock < $quantity){
                 return response()->json(['error' => 'No hay productos suficientes en stock'], 404);
             }
+
             $total = $total + $price*$quantity;
         }
 
@@ -81,7 +85,7 @@ class OrderController extends Controller implements HasMiddleware
             $order->products()->attach($productData['product_id'], ['quantity' => $productData['quantity']]);
         }
 
-        //TODO Llamar a la parasela, confirmar que se realiza el pago, en función de
+        //TODO Llamar a la pasarela, confirmar que se realiza el pago, en función de
         //TODO cambiar el estado a completed o cancelled y finalmente ->
         $order->save();
 
