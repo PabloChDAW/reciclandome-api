@@ -77,7 +77,8 @@ class OrderController extends Controller implements HasMiddleware
         $order->total = $total;
 
         foreach ($validated['products'] as $productData) {
-            $order->products()->attach($productData['product_id']);
+            //Quantity hay que pasarlo así porque necesita saber el valor que le estamos pasando
+            $order->products()->attach($productData['product_id'], ['quantity' => $productData['quantity']]);
         }
 
         //TODO Llamar a la parasela, confirmar que se realiza el pago, en función de
