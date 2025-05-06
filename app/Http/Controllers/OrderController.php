@@ -48,17 +48,41 @@ class OrderController extends Controller implements HasMiddleware
     {
         $validated = $request->validate([
             'address' => 'required|string|max:255',
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|min:1|integer',
         ]);
-
+        
         $validated['status'] = 'pending';
         $validated['total'] = 0;
 
+        $total = 0;
+        foreach ($validated['products'] as $productData) {
+            $product = Product::where("id", $productData['product_id'])->first();
+            if($product == null){
+                return response()->json(['error' => 'El producto no existe'], 404);
+            }
+            $price = $product->price;
+            $stock = $product->stock;
+            $quantity = $productData['quantity'];
+
+            if($stock < $quantity){
+                return response()->json(['error' => 'No hay productos suficientes en stock'], 404);
+            }
+            $total = $total + $price*$quantity;      
+        }
+
         $order = $request->user()->orders()->create($validated);
         $orderWithUser = Order::with('user')->find($order->id);
+        $order->total = $total;
 
-        // 2 cosas
-        // Método UpdateProductsInOrder: Resta el stock de los productos porque ingresamos un nuevo producto en order y se valida que haya stock (stock -1)
-        // Método UpdateStatus: Cuando se ejecute restar el n de productos que haya (restar stock)
+        foreach ($validated['products'] as $productData) {
+            $order->products()->attach($productData['product_id']);
+        }
+        
+        //TODO Llamar a la parasela, confirmar que se realiza el pago, en función de
+        //TODO cambiar el estado a completed o cancelled y finalmente ->
+        $order->save();
 
         return ['order' => $orderWithUser];
     }
@@ -74,15 +98,7 @@ class OrderController extends Controller implements HasMiddleware
             'products.*.product_id' => 'required|exists:products,id',
         ]);
 
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response()->json(['error' => 'Pedido no encontrado.'], 404);
-        }
-
-        if ($order->user_id !== Auth::id()) {
-            return response()->json(['error' => 'No tienes permiso para modificar este pedido.'], 403);
-        }
+        
 
         // Eliminar todos los productos del pedido
         $order->products()->detach();
@@ -107,20 +123,7 @@ class OrderController extends Controller implements HasMiddleware
     //funcion para modificar los pedidos a "Completed". ESTÁ
     public function updateStatus($id)
     {
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response()->json(['error' => 'Pedido no encontrado.'], 404);
-        }
-
-        if ($order->user_id !== Auth::id()) {
-            return response()->json(['error' => 'No tienes permiso para modificar este pedido.'], 403);
-        }
-
-        $order->status = 'completed';
-        $order->save();
-
-        return response()->json(['message' => 'Estado del pedido actualizado correctamente.', 'order' => $order]);
+        //TODO LÓGICA DE LA PASARELA
     }
 
     /**
