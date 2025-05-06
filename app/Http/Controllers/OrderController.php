@@ -12,10 +12,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 class OrderController extends Controller implements HasMiddleware
 {
-
-
-    //TODO Hacer un método que devuelva un JSON con order y sus productos ESTÁ
-
+    // Hacer un método que devuelva un JSON con order y sus productos ESTÁ
     public static function middleware()
     {
         return [
@@ -43,7 +40,9 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Crear un nuevo pedido para el usuario autenticado. ESTÁ
+     * Crear un nuevo pedido para el usuario autenticado.
+     * Al crearse se pedirá la dirección de envío y se guardará un pedido
+     * vacío. ESTÁ
      */
     public function store(Request $request)
     {
@@ -57,7 +56,6 @@ class OrderController extends Controller implements HasMiddleware
         $order = $request->user()->orders()->create($validated);
         $orderWithUser = Order::with('user')->find($order->id);
 
-
         // 2 cosas
         // Método UpdateProductsInOrder: Resta el stock de los productos porque ingresamos un nuevo producto en order y se valida que haya stock (stock -1)
         // Método UpdateStatus: Cuando se ejecute restar el n de productos que haya (restar stock)
@@ -66,7 +64,8 @@ class OrderController extends Controller implements HasMiddleware
     }
 
     /**
-     * Actualizar un pedido del usuario autenticado. ESTÁ
+     * Agregar productos a un pedido del usuario autenticado.
+     * 
      */
     public function updateProductsInOrder(Request $request, $id)
     {
@@ -85,7 +84,7 @@ class OrderController extends Controller implements HasMiddleware
             return response()->json(['error' => 'No tienes permiso para modificar este pedido.'], 403);
         }
 
-        // Eliminar todos los productos del pedido 
+        // Eliminar todos los productos del pedido
         $order->products()->detach();
 
         $total = 0;
@@ -95,10 +94,14 @@ class OrderController extends Controller implements HasMiddleware
             $total = $total + $price;
             $order->products()->attach($productData['product_id']);
         }
+
         $order->total = $total;
         $order->save();
 
-        return response()->json(['message' => 'Productos actualizados correctamente en el pedido.', 'order' => $order]);
+        return response()->json([
+            'message' => 'Productos actualizados correctamente en el pedido.',
+            'order' => $order
+        ]);
     }
 
     //funcion para modificar los pedidos a "Completed". ESTÁ
@@ -119,6 +122,7 @@ class OrderController extends Controller implements HasMiddleware
 
         return response()->json(['message' => 'Estado del pedido actualizado correctamente.', 'order' => $order]);
     }
+
     /**
      * Eliminar un pedido del usuario autenticado. ESTÁ
      */
