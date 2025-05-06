@@ -37,8 +37,8 @@ Route::apiResource('orders', OrderController::class);
 
 //Rutas para actualizar el estado del pedido de pending a completed
 Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
-//Esto es más de lo mismo, al actualizar mi carrito lo que se hace internamente es eliminar todo del carrito e insertar lo nuevo para no hacer peticiones de más a la bbdd
-Route::middleware('auth:sanctum')->put('/orders/{id}/update-products', [OrderController::class, 'updateProductsInOrder']);
+//(Obsoleto) Esto es más de lo mismo, al actualizar mi carrito lo que se hace internamente es eliminar todo del carrito e insertar lo nuevo para no hacer peticiones de más a la bbdd
+// Route::middleware('auth:sanctum')->put('/orders/{id}/update-products', [OrderController::class, 'updateProductsInOrder']);
 
 
 

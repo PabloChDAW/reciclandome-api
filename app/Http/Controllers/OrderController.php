@@ -52,7 +52,7 @@ class OrderController extends Controller implements HasMiddleware
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|min:1|integer',
         ]);
-        
+
         $validated['status'] = 'pending';
         $validated['total'] = 0;
 
@@ -69,7 +69,7 @@ class OrderController extends Controller implements HasMiddleware
             if($stock < $quantity){
                 return response()->json(['error' => 'No hay productos suficientes en stock'], 404);
             }
-            $total = $total + $price*$quantity;      
+            $total = $total + $price*$quantity;
         }
 
         $order = $request->user()->orders()->create($validated);
@@ -79,7 +79,7 @@ class OrderController extends Controller implements HasMiddleware
         foreach ($validated['products'] as $productData) {
             $order->products()->attach($productData['product_id']);
         }
-        
+
         //TODO Llamar a la parasela, confirmar que se realiza el pago, en función de
         //TODO cambiar el estado a completed o cancelled y finalmente ->
         $order->save();
@@ -89,36 +89,36 @@ class OrderController extends Controller implements HasMiddleware
 
     /**
      * Agregar productos a un pedido del usuario autenticado.
-     * 
+     *
      */
-    public function updateProductsInOrder(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'products' => 'required|array',
-            'products.*.product_id' => 'required|exists:products,id',
-        ]);
+    // public function updateProductsInOrder(Request $request, $id)
+    // {
+    //     $validated = $request->validate([
+    //         'products' => 'required|array',
+    //         'products.*.product_id' => 'required|exists:products,id',
+    //     ]);
 
-        
 
-        // Eliminar todos los productos del pedido
-        $order->products()->detach();
 
-        $total = 0;
+    //     // Eliminar todos los productos del pedido
+    //     $order->products()->detach();
 
-        foreach ($validated['products'] as $productData) {
-            $price = Product::where("id", $productData['product_id'])->first()?->price;
-            $total = $total + $price;
-            $order->products()->attach($productData['product_id']);
-        }
+    //     $total = 0;
 
-        $order->total = $total;
-        $order->save();
+    //     foreach ($validated['products'] as $productData) {
+    //         $price = Product::where("id", $productData['product_id'])->first()?->price;
+    //         $total = $total + $price;
+    //         $order->products()->attach($productData['product_id']);
+    //     }
 
-        return response()->json([
-            'message' => 'Productos actualizados correctamente en el pedido.',
-            'order' => $order
-        ]);
-    }
+    //     $order->total = $total;
+    //     $order->save();
+
+    //     return response()->json([
+    //         'message' => 'Productos actualizados correctamente en el pedido.',
+    //         'order' => $order
+    //     ]);
+    // }
 
     //funcion para modificar los pedidos a "Completed". ESTÁ
     public function updateStatus($id)
