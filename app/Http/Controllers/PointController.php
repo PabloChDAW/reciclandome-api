@@ -22,7 +22,6 @@ class PointController extends Controller implements HasMiddleware
         return Point::with('user')->latest()->get();
     }
 
-
     public function store(Request $request)
     {
         $fields = $request->validate([
@@ -40,12 +39,10 @@ class PointController extends Controller implements HasMiddleware
         return ['point' => $point, 'user' => $point->user];
     }
 
-
     public function show(Point $point)
     {
         return ['point' => $point, 'user' => $point->user];
     }
-
 
     public function update(Request $request, Point $point)
     {
@@ -66,7 +63,6 @@ class PointController extends Controller implements HasMiddleware
 
         return ['point' => $point, 'user' => $point->user];
     }
-
 
     public function destroy(Point $point)
     {
