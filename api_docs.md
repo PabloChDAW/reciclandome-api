@@ -60,7 +60,7 @@ Ejemplos de JSON (en el body) de entrada y respuestas, endpoints y métodos de l
 - Método: POST
 - URI: api/orders
 - Función del controlador: store()
-- Entrada de datos:
+- Entrada de datos (es necesario tener al menos dos productos en la base de datos):
 ```json
 {
     "address": "Calle Pernambuco",
