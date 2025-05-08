@@ -33,4 +33,10 @@ Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrderController::
 //(Obsoleto) Esto es más de lo mismo, al actualizar mi carrito lo que se hace internamente es eliminar todo del carrito e insertar lo nuevo para no hacer peticiones de más a la bbdd
 // Route::middleware('auth:sanctum')->put('/orders/{id}/update-products', [OrderController::class, 'updateProductsInOrder']);
 
-Route::get('/types', [TypeController::class, 'index']);
+
+
+Route::apiResource('types', TypeController::class);
+
+Route::get('/types/{id}/points', [TypeController::class, 'getPointsByType']);
+Route::get('/points-with-types', [PointController::class, 'withTypesIndex']);
+Route::get('/points/{point}/with-types', [PointController::class, 'withTypesShow']);

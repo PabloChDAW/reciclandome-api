@@ -72,4 +72,20 @@ class PointController extends Controller implements HasMiddleware
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
+
+    //Devolver los puntos dependiendo de su tipo
+    // Devuelve todos los puntos con sus tipos
+public function withTypesIndex()
+{
+    return Point::with(['user', 'types'])->latest()->get();
+}
+
+// Devuelve un punto específico con sus tipos
+public function withTypesShow(Point $point)
+{
+    $point->load(['user', 'types']);
+
+    return ['point' => $point, 'user' => $point->user, 'types' => $point->types];
+}
+
 }
