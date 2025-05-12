@@ -69,20 +69,36 @@ class PointController extends Controller implements HasMiddleware
      * Aplica políticas de acceso para que el punto sólo pueda ser
      * modificado por el usuario que lo creó.
      */
-    public function update(Request $request, Point $point)
-    {
-        // Aplica la política de acceso.
-        Gate::authorize('modify', $point);
+    /**
+ * Actualiza un punto existente.
+ */
+public function update(Request $request, Point $point)
+{
+    // Aplica la política de acceso.
+    Gate::authorize('modify', $point);
 
-        $fields = $request->validate([
-            'longitude' => 'required|numeric|min:-180|max:180',
-            'latitude' => 'required|numeric|min:-90|max:90',
-        ]);
+    $fields = $request->validate([
+        'latitude' => 'required|numeric|min:-90|max:90',
+        'longitude' => 'required|numeric|min:-180|max:180',
+        'city' => 'required|string|max:255',
+        'point_type' => 'sometimes|nullable|string|max:50',
+        'place_type' => 'sometimes|nullable|string|max:50',
+        'name' => 'sometimes|nullable|string|max:100',
+        'address' => 'nullable|string|max:255',
+        'phone' => 'sometimes|nullable|string|max:20', 
+        'way' => 'nullable|string|max:255',
+        'email' => 'sometimes|nullable|email|max:255',
+        'region' => 'sometimes|nullable|string|max:100',
+        'country' => 'sometimes|nullable|string|max:100',
+        'postcode' => 'sometimes|nullable|string|max:20',
+        'description' => 'sometimes|nullable|string|max:255',
+        'url' => 'sometimes|nullable|string|max:255',
+    ]);
 
-        $point->update($fields);
+    $point->update($fields);
 
-        return ['point' => $point, 'user' => $point->user];
-    }
+    return response()->json(['point' => $point, 'user' => $point->user]);
+}
 
     /**
      * Elimina un punto específico.
