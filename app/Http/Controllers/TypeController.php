@@ -88,11 +88,5 @@ class TypeController extends Controller
         return response()->json(Type::all());
     }
 
-    public function getPointsByType($id)
-{
-    $type = Type::with('points')->findOrFail($id);
-
-    return response()->json($type->points);
-}
-
+   
 }
