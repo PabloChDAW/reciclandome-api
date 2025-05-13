@@ -49,8 +49,11 @@ class PointController extends Controller implements HasMiddleware
         ]);
         
         $point = $request->user()->points()->create($fields);
+        $pointWithUser = Point::with('user')->find($point->id);
 
-        return response()->json(['point' => $point, 'user' => $point->user], 201);
+        return response()->json(['point' => $pointWithUser]);
+
+       
     }
 
     /**
@@ -111,4 +114,6 @@ public function update(Request $request, Point $point)
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
+
+    //TODO añadir funcion para al crear o modificar un punto se puedan añadir tipos
 }

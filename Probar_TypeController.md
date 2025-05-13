@@ -9,7 +9,7 @@ POST->
   "name": "Restaurante",
   "description": "Lugares para comer",
   "icon": "️Icono de comida",
-  "point_id": [1, 2]  
+  "point_id": [1, 2]
 }
 ```
 - Respuesta:

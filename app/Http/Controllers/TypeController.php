@@ -6,7 +6,6 @@ use App\Models\Type;
 use App\Models\Point;
 use Illuminate\Http\Request;
 
-// TODO Terminar este controlador.
 class TypeController extends Controller
 {
 
@@ -16,16 +15,12 @@ class TypeController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string',
-            'point_ids' => 'array', // array de IDs de puntos
-            'point_ids.*' => 'exists:points,id'
+            'icon' => 'nullable|string'
         ]);
 
         $type = Type::create($validated);
 
-        if (!empty($validated['point_ids'])) {
-            $type->points()->sync($validated['point_ids']);
-        }
+
 
         return response()->json($type->load('points'), 201);
     }
@@ -45,9 +40,7 @@ class TypeController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string',
-            'point_ids' => 'array',
-            'point_ids.*' => 'exists:points,id'
+            'icon' => 'nullable|string'
         ]);
 
         $type->update($validated);
@@ -66,7 +59,7 @@ class TypeController extends Controller
         $type->points()->detach(); // Borra relaciones
         $type->delete();
 
-        return response()->json(['message' => 'Type deleted']);
+        return response()->json(['message' => 'Tipo borrado']);
     }
     public function index(Request $request)
     {
