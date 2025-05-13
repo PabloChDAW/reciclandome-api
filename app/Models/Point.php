@@ -13,11 +13,20 @@ class Point extends Model
     protected $fillable = [
         'latitude',
         'longitude',
-        'city',
+        'point_type',
+        'place_type',
+        'name',
         'address',
-        'telephone',
+        'city',
+        'region',
+        'country',
+        'postcode',
+        'phone',
         'email',
         'url',
+        'way',
+        'description',
+        
     ];
 
     /**
