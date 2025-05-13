@@ -17,75 +17,98 @@ class PointController extends Controller implements HasMiddleware
         ];
     }
 
+    /**
+     * Muestra todos los puntos almacenados en la base de datos.
+     */
     public function index()
     {
         return Point::with('user')->latest()->get();
     }
 
+    /**
+     * Almacena un nuevo punto asociado a un usuario.
+     */
     public function store(Request $request)
     {
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
-            'city' => 'nullable|string|max:255',
+            'city' => 'required|string|max:255',
+            'point_type' => 'sometimes|nullable|string|max:50',
+            'place_type' => 'sometimes|nullable|string|max:50',
+            'name' => 'sometimes|nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'url' => 'nullable|url|max:255',
+            'phone' => 'sometimes|nullable|string|max:20', 
+            'way' => 'nullable|string|max:255',
+            'email' => 'sometimes|nullable|email|max:255',
+            'region' => 'sometimes|nullable|string|max:100',
+            'country' => 'sometimes|nullable|string|max:100',
+            'postcode' => 'sometimes|nullable|string|max:20',
+            'description' => 'sometimes|nullable|string|max:255',
+            'url' => 'sometimes|nullable|string|max:255',
         ]);
-
+        
         $point = $request->user()->points()->create($fields);
 
-        return ['point' => $point, 'user' => $point->user];
+        return response()->json(['point' => $point, 'user' => $point->user], 201);
     }
 
+    /**
+     * Muestra los datos de un punto específico.
+     */
     public function show(Point $point)
     {
         return ['point' => $point, 'user' => $point->user];
     }
 
-    public function update(Request $request, Point $point)
-    {
-        // Aplica la política de acceso.
-        Gate::authorize('modify', $point);
+    /**
+     * Actualiza los datos de un punto específico.
+     * Aplica políticas de acceso para que el punto sólo pueda ser
+     * modificado por el usuario que lo creó.
+     */
+    /**
+ * Actualiza un punto existente.
+ */
+public function update(Request $request, Point $point)
+{
+    // Aplica la política de acceso.
+    Gate::authorize('modify', $point);
 
-        $fields = $request->validate([
-            'latitude' => 'required|numeric|min:-90|max:90',
-            'longitude' => 'required|numeric|min:-180|max:180',
-            'city' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'url' => 'nullable|url|max:255',
-        ]);
+    $fields = $request->validate([
+        'latitude' => 'required|numeric|min:-90|max:90',
+        'longitude' => 'required|numeric|min:-180|max:180',
+        'city' => 'required|string|max:255',
+        'point_type' => 'sometimes|nullable|string|max:50',
+        'place_type' => 'sometimes|nullable|string|max:50',
+        'name' => 'sometimes|nullable|string|max:100',
+        'address' => 'nullable|string|max:255',
+        'phone' => 'sometimes|nullable|string|max:20', 
+        'way' => 'nullable|string|max:255',
+        'email' => 'sometimes|nullable|email|max:255',
+        'region' => 'sometimes|nullable|string|max:100',
+        'country' => 'sometimes|nullable|string|max:100',
+        'postcode' => 'sometimes|nullable|string|max:20',
+        'description' => 'sometimes|nullable|string|max:255',
+        'url' => 'sometimes|nullable|string|max:255',
+    ]);
 
-        $point->update($fields);
+    $point->update($fields);
 
-        return ['point' => $point, 'user' => $point->user];
-    }
+    return response()->json(['point' => $point, 'user' => $point->user]);
+}
 
+    /**
+     * Elimina un punto específico.
+     * Aplica políticas de acceso para que el punto sólo pueda ser
+     * eliminado por el usuario que lo creó.
+     */
     public function destroy(Point $point)
     {
+        // Aplica la política de acceso.
         Gate::authorize('modify', $point);
 
         $point->delete();
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
-
-    //Devolver los puntos dependiendo de su tipo
-    // Devuelve todos los puntos con sus tipos
-public function withTypesIndex()
-{
-    return Point::with(['user', 'types'])->latest()->get();
-}
-
-// Devuelve un punto específico con sus tipos
-public function withTypesShow(Point $point)
-{
-    $point->load(['user', 'types']);
-
-    return ['point' => $point, 'user' => $point->user, 'types' => $point->types];
-}
-
 }
