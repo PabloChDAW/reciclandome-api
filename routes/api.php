@@ -36,7 +36,6 @@ Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrderController::
 
 
 Route::apiResource('types', TypeController::class);
-
 // Route::get('/types/{id}/points', [TypeController::class, 'getPointsByType']);
 // Route::get('/points-with-types', [PointController::class, 'withTypesIndex']);
 // Route::get('/points/{point}/with-types', [PointController::class, 'withTypesShow']);
