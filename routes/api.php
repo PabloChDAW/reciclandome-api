@@ -9,6 +9,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TypeController;
 
+use App\Http\Controllers\PayPalController;
+
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -34,3 +37,6 @@ Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrderController::
 // Route::middleware('auth:sanctum')->put('/orders/{id}/update-products', [OrderController::class, 'updateProductsInOrder']);
 
 Route::get('/types', [TypeController::class, 'index']);
+
+//PAYPAL
+Route::post('/paypal/payment-completed', [PayPalController::class, 'paymentCompleted']);
