@@ -22,9 +22,9 @@ class PointController extends Controller implements HasMiddleware
      * Muestra todos los puntos almacenados en la base de datos.
      */
     public function index()
-{
-    return Point::with(['user', 'types'])->latest()->get();
-}
+    {
+        return Point::with(['user', 'types'])->latest()->get();
+    }
 
 
     /**
@@ -48,27 +48,21 @@ class PointController extends Controller implements HasMiddleware
             'postcode' => 'sometimes|nullable|string|max:20',
             'description' => 'sometimes|nullable|string|max:255',
             'url' => 'sometimes|nullable|string|max:255',
-            'type' => 'nullable|string|max:100'
+            'type_ids' => 'sometimes|array',
+            'type_ids.*' => 'integer|exists:types,id',
         ]);
 
         $point = $request->user()->points()->create($fields);
 
-        if (!empty($request->type)) {
-            $type = Type::firstOrCreate(
-                ['name' => $request->type],
-                [
-                    'description' => 'Tipo creado automáticamente',
-                    'icon' => 'Icono específico'
-                ]
-            );
-
-            $point->types()->attach($type->id);
+        if (!empty($fields['type_ids'])) {
+            $point->types()->attach($fields['type_ids']);
         }
 
         $point->load(['user', 'types']);
 
         return response()->json(['point' => $point], 201);
     }
+
 
     /**
      * Muestra los datos de un punto específico.
@@ -107,28 +101,20 @@ class PointController extends Controller implements HasMiddleware
             'postcode' => 'sometimes|nullable|string|max:20',
             'description' => 'sometimes|nullable|string|max:255',
             'url' => 'sometimes|nullable|string|max:255',
-            'type' => 'sometimes|nullable|string|max:100', 
+            'type_ids' => 'sometimes|array',
+            'type_ids.*' => 'integer|exists:types,id',
         ]);
 
         $point->update($fields);
 
-        if (!empty($request->type)) {
-            $point->types()->detach();
+    if (isset($fields['type_ids'])) {
+        $point->types()->sync($fields['type_ids']);
+    }
 
-            $type = Type::firstOrCreate(
-                ['name' => $request->type],
-                [
-                    'description' => 'Tipo creado automáticamente',
-                    'icon' => 'default-icon.png'
-                ]
-            );
+    $point->load(['user', 'types']);
 
-            $point->types()->attach($type->id);
-        }
-
-        $point->load(['user', 'types']);
-
-        return response()->json(['point' => $point]);
+    return response()->json(['point' => $point]);
+    
     }
 
 
@@ -146,6 +132,4 @@ class PointController extends Controller implements HasMiddleware
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
-
-    
 }
