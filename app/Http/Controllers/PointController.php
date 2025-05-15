@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Type;
 use App\Models\Point;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 class PointController extends Controller implements HasMiddleware
 {
@@ -22,9 +23,8 @@ class PointController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        return Point::with('user')->latest()->get();
+        return Point::with(['user', 'types'])->latest()->get();
     }
-
     /**
      * Almacena un nuevo punto asociado a un usuario.
      */
@@ -46,15 +46,22 @@ class PointController extends Controller implements HasMiddleware
             'postcode' => 'sometimes|nullable|string|max:20',
             'description' => 'sometimes|nullable|string|max:255',
             'url' => 'sometimes|nullable|string|max:255',
-            //TODO Implementar esto en el front, pero mientras tanto para que funcione:
-
-
+            'type_ids' => 'sometimes|array',
+            'type_ids.*' => 'integer|exists:types,id',
         ]);
+
         
         $point = $request->user()->points()->create($fields);
 
-        return response()->json(['point' => $point, 'user' => $point->user], 201);
+        if (!empty($fields['type_ids'])) {
+            $point->types()->attach($fields['type_ids']);
+        }
+
+        $point->load(['user', 'types']);
+
+        return response()->json(['point' => $point], 201);
     }
+
 
     /**
      * Muestra los datos de un punto específico.
@@ -70,35 +77,45 @@ class PointController extends Controller implements HasMiddleware
      * modificado por el usuario que lo creó.
      */
     /**
- * Actualiza un punto existente.
- */
-public function update(Request $request, Point $point)
-{
-    // Aplica la política de acceso.
-    Gate::authorize('modify', $point);
+     * Actualiza un punto existente.
+     */
+    public function update(Request $request, Point $point)
+    {
+        // Aplica la política de acceso
+        Gate::authorize('modify', $point);
 
-    $fields = $request->validate([
-        'latitude' => 'required|numeric|min:-90|max:90',
-        'longitude' => 'required|numeric|min:-180|max:180',
-        'city' => 'required|string|max:255',
-        'point_type' => 'sometimes|nullable|string|max:50',
-        'place_type' => 'sometimes|nullable|string|max:50',
-        'name' => 'sometimes|nullable|string|max:100',
-        'address' => 'nullable|string|max:255',
-        'phone' => 'sometimes|nullable|string|max:20', 
-        'way' => 'nullable|string|max:255',
-        'email' => 'sometimes|nullable|email|max:255',
-        'region' => 'sometimes|nullable|string|max:100',
-        'country' => 'sometimes|nullable|string|max:100',
-        'postcode' => 'sometimes|nullable|string|max:20',
-        'description' => 'sometimes|nullable|string|max:255',
-        'url' => 'sometimes|nullable|string|max:255',
-    ]);
+        $fields = $request->validate([
+            'latitude' => 'required|numeric|min:-90|max:90',
+            'longitude' => 'required|numeric|min:-180|max:180',
+            'city' => 'required|string|max:255',
+            'point_type' => 'sometimes|nullable|string|max:50',
+            'place_type' => 'sometimes|nullable|string|max:50',
+            'name' => 'sometimes|nullable|string|max:100',
+            'address' => 'nullable|string|max:255',
+            'phone' => 'sometimes|nullable|string|max:20',
+            'way' => 'nullable|string|max:255',
+            'email' => 'sometimes|nullable|email|max:255',
+            'region' => 'sometimes|nullable|string|max:100',
+            'country' => 'sometimes|nullable|string|max:100',
+            'postcode' => 'sometimes|nullable|string|max:20',
+            'description' => 'sometimes|nullable|string|max:255',
+            'url' => 'sometimes|nullable|string|max:255',
+            'type_ids' => 'sometimes|array',
+            'type_ids.*' => 'integer|exists:types,id',
+        ]);
 
     $point->update($fields);
 
-    return response()->json(['point' => $point, 'user' => $point->user]);
-}
+    if (isset($fields['type_ids'])) {
+        $point->types()->sync($fields['type_ids']);
+    }
+
+    $point->load(['user','types']);
+
+    return response()->json(['point' => $point]);
+
+    }
+
 
     /**
      * Elimina un punto específico.
