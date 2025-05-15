@@ -1,15 +1,15 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PointController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
-// use App\Http\Controllers\OrderProductController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TypeController;
-
+use App\Http\Controllers\OrderController;
+// use App\Http\Controllers\OrderProductController;
+use App\Http\Controllers\PointController;
 use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\ProductController;
+
 
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
