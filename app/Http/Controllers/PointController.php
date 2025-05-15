@@ -111,10 +111,10 @@ class PointController extends Controller implements HasMiddleware
         $point->types()->sync($fields['type_ids']);
     }
 
-    $point->load(['user', 'types']);
+    $point->load(['types']);
 
     return response()->json(['point' => $point]);
-    
+
     }
 
 
