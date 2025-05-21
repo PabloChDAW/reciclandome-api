@@ -19,54 +19,54 @@ class AuthController extends Controller
             'password' => 'required|confirmed'
         ]);
 
-        $minusculas = array_merge(
-            range('a', 'z'),
-            ['á', 'é', 'í', 'ó', 'ú', 'ü', 'ñ']
-        );
+        // $minusculas = array_merge(
+        //     range('a', 'z'),
+        //     ['á', 'é', 'í', 'ó', 'ú', 'ü', 'ñ']
+        // );
 
-        $mayusculas = array_merge(
-            range('A', 'Z'),
-            ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
-        );
+        // $mayusculas = array_merge(
+        //     range('A', 'Z'),
+        //     ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
+        // );
 
-        $numeros = range('0', '9');
+        // $numeros = range('0', '9');
 
-        $simbolos = str_split('!@#$%^&*()-_=+[]{};:,.<>?¿¡');
+        // $simbolos = str_split('!@#$%^&*()-_=+[]{};:,.<>?¿¡');
 
-        $password = $fields['password'];
-        $passwordarray = str_split($password);
+        // $password = $fields['password'];
+        // $passwordarray = str_split($password);
 
-        $hasMinus = count(array_intersect($passwordarray, $minusculas)) > 0;
-        $hasMayus = count(array_intersect($passwordarray, $mayusculas)) > 0;
-        $hasNum = count(array_intersect($passwordarray, $numeros)) > 0;
-        $hasSymbols = count(array_intersect($passwordarray, $simbolos)) > 0;
-        $haslength12 = count($passwordarray) >= 12;
+        // $hasMinus = count(array_intersect($passwordarray, $minusculas)) > 0;
+        // $hasMayus = count(array_intersect($passwordarray, $mayusculas)) > 0;
+        // $hasNum = count(array_intersect($passwordarray, $numeros)) > 0;
+        // $hasSymbols = count(array_intersect($passwordarray, $simbolos)) > 0;
+        // $haslength12 = count($passwordarray) >= 12;
 
-        if(!$hasMinus){
-            return response()->json([
-            'errors' => 'La contraseña debe tener Minúsculas'
-            ], 422);
-        }
-        if(!$hasMayus){
-            return response()->json([
-            'errors' => 'La contraseña debe tener Mayúsculas'
-            ], 422);
-        }
-        if(!$hasSymbols){
-            return response()->json([
-            'errors' => 'La contraseña debe tener Símbolos'
-            ], 422);
-        }
-        if(!$hasNum){
-            return response()->json([
-            'errors' => 'La contraseña debe tener Números'
-            ], 422);
-        }
-        if(!$haslength12){
-            return response()->json([
-            'errors' => 'La contraseña debe tener 12 caracteres'
-            ], 422);
-        }
+        // if(!$hasMinus){
+        //     return response()->json([
+        //     'errors' => 'La contraseña debe tener Minúsculas'
+        //     ], 422);
+        // }
+        // if(!$hasMayus){
+        //     return response()->json([
+        //     'errors' => 'La contraseña debe tener Mayúsculas'
+        //     ], 422);
+        // }
+        // if(!$hasSymbols){
+        //     return response()->json([
+        //     'errors' => 'La contraseña debe tener Símbolos'
+        //     ], 422);
+        // }
+        // if(!$hasNum){
+        //     return response()->json([
+        //     'errors' => 'La contraseña debe tener Números'
+        //     ], 422);
+        // }
+        // if(!$haslength12){
+        //     return response()->json([
+        //     'errors' => 'La contraseña debe tener 12 caracteres'
+        //     ], 422);
+        // }
 
         $user = User::create($fields);
         $token = $user->createToken($request->name);
