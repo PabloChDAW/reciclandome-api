@@ -92,7 +92,29 @@ class OrderController extends Controller implements HasMiddleware
         return ['order' => $orderWithUser];
     }
 
+
+
+    //funcion para modificar los pedidos a "Completed". ESTÁ
+    public function updateStatus($id)
+    {
+        //TODO LÓGICA DE LA PASARELA
+    }
+
     /**
+     * Eliminar un pedido del usuario autenticado. ESTÁ
+     */
+    public function destroy(Order $order)
+    {
+        Gate::authorize('modify', $order);
+
+        $order->delete();
+
+        return ['message' => 'El pedido ha sido eliminado.'];
+    }
+
+
+
+        /**
      * Agregar productos a un pedido del usuario autenticado.
      *
      */
@@ -124,22 +146,4 @@ class OrderController extends Controller implements HasMiddleware
     //         'order' => $order
     //     ]);
     // }
-
-    //funcion para modificar los pedidos a "Completed". ESTÁ
-    public function updateStatus($id)
-    {
-        //TODO LÓGICA DE LA PASARELA
-    }
-
-    /**
-     * Eliminar un pedido del usuario autenticado. ESTÁ
-     */
-    public function destroy(Order $order)
-    {
-        Gate::authorize('modify', $order);
-
-        $order->delete();
-
-        return ['message' => 'El pedido ha sido eliminado.'];
-    }
 }
