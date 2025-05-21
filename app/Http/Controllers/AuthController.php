@@ -44,27 +44,27 @@ class AuthController extends Controller
 
         if(!$hasMinus){
             return response()->json([
-            'error' => 'La contraseña debe tener Minúsculas'
+            'errors' => 'La contraseña debe tener Minúsculas'
             ], 422);
         }
         if(!$hasMayus){
             return response()->json([
-            'error' => 'La contraseña debe tener Mayúsculas'
+            'errors' => 'La contraseña debe tener Mayúsculas'
             ], 422);
         }
         if(!$hasSymbols){
             return response()->json([
-            'error' => 'La contraseña debe tener Símbolos'
+            'errors' => 'La contraseña debe tener Símbolos'
             ], 422);
         }
         if(!$hasNum){
             return response()->json([
-            'error' => 'La contraseña debe tener Números'
+            'errors' => 'La contraseña debe tener Números'
             ], 422);
         }
         if(!$haslength12){
             return response()->json([
-            'error' => 'La contraseña debe tener 12 caracteres'
+            'errors' => 'La contraseña debe tener 12 caracteres'
             ], 422);
         }
 
