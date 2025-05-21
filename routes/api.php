@@ -36,8 +36,9 @@ Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrderController::
 //(Obsoleto) Esto es más de lo mismo, al actualizar mi carrito lo que se hace internamente es eliminar todo del carrito e insertar lo nuevo para no hacer peticiones de más a la bbdd
 // Route::middleware('auth:sanctum')->put('/orders/{id}/update-products', [OrderController::class, 'updateProductsInOrder']);
 
-//PAYPAL
-Route::post('/paypal/payment-completed', [PayPalController::class, 'paymentCompleted']);
+//PAYPAL - cambiamos la ruta de abajo por una ruta protegida por sanctum
+//Route::post('/paypal/payment-completed', [PayPalController::class, 'paymentCompleted']);
+Route::middleware('auth:sanctum')->post('/paypal/payment-completed', [PayPalController::class, 'paymentCompleted']);
 
 
 Route::apiResource('types', TypeController::class);
