@@ -24,9 +24,12 @@ class OrderController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $orders = Order::where('user_id', Auth::id())->get();
+        $orders = Order::with('products')
+            ->where('user_id', Auth::id())
+            ->orderBy('id', 'desc')
+            ->get();
 
-        return response()->json($orders);
+        return response()->json(['orders' => $orders]);
     }
 
     /**
