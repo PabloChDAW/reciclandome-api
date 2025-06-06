@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
 
-            $table->string('point_type')->nullable();
+            $table->string('point_type');
             $table->string('place_type')->nullable();
             $table->string('name')->nullable();
 
             $table->string('way')->nullable();
             $table->string('address')->nullable();
-            $table->string('city');
+            $table->string('city')->nullable();
             $table->string('region')->nullable();
             $table->string('country')->nullable();
             $table->string('postcode')->nullable();
