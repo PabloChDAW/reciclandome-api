@@ -33,12 +33,12 @@ class PointController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
-            'city' => 'required|string|max:255',
-            'point_type' => 'sometimes|nullable|string|max:50',
+            'city' => 'nullable|string|max:255',
+            'point_type' => 'required|string|max:50',
             'place_type' => 'sometimes|nullable|string|max:50',
-            'name' => 'sometimes|nullable|string|max:100',
+            'name' => 'required|string|max:100|min:3',
             'address' => 'nullable|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20', 
+            'phone' => 'sometimes|nullable|string|max:20',
             'way' => 'nullable|string|max:255',
             'email' => 'sometimes|nullable|email|max:255',
             'region' => 'sometimes|nullable|string|max:100',
@@ -50,7 +50,14 @@ class PointController extends Controller implements HasMiddleware
             'type_ids.*' => 'integer|exists:types,id',
         ]);
 
-        
+        if ($fields['place_type'] == 'continental_marine' && $fields['way'] == 'continental_marine'
+        && $fields['country'] == null) {
+            return response()->json([
+            'errors' => 'No puedes crear un punto de reciclaje ahí. ¿Acaso está en mitad de la nada?',
+            'lugarVacio' => true
+            ], 422);
+        }
+
         $point = $request->user()->points()->create($fields);
 
         if (!empty($fields['type_ids'])) {
