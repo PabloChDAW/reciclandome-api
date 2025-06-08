@@ -31,7 +31,7 @@ class AuthController extends Controller
 
         $numeros = range('0', '9');
 
-        $simbolos = str_split('!@#$%^&*()-_=+[]{};:,.<>?¿¡');
+        $simbolos = str_split('!@#$%^&*()-_=+[]{};:,.<>?¿¡"\'');
 
         $password = $fields['password'];
         $passwordarray = str_split($password);
@@ -40,7 +40,7 @@ class AuthController extends Controller
         $hasMayus = count(array_intersect($passwordarray, $mayusculas)) > 0;
         $hasNum = count(array_intersect($passwordarray, $numeros)) > 0;
         $hasSymbols = count(array_intersect($passwordarray, $simbolos)) > 0;
-        $haslength12 = count($passwordarray) >= 12;
+        $haslength10 = count($passwordarray) >= 10;
 
         if(!$hasMinus){
             return response()->json([
@@ -62,7 +62,7 @@ class AuthController extends Controller
             'errors' => 'La contraseña debe tener Números'
             ], 422);
         }
-        if(!$haslength12){
+        if(!$haslength10){
             return response()->json([
             'errors' => 'La contraseña debe tener 12 caracteres'
             ], 422);
