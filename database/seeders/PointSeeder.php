@@ -184,7 +184,6 @@ class PointSeeder extends Seeder
             $pointData['place_type'] = $placeTypes[array_rand($placeTypes)];
             $pointData['way'] = $ways[array_rand($ways)];
 
-            $pointData['point_type'] = $pointTypes[array_rand($pointTypes)];
             $pointData['description'] = 'Centro de reciclaje municipal para la gestión de residuos urbanos';
             $pointData['phone'] = '9' . str_pad(rand(10000000, 99999999), 8, '0', STR_PAD_LEFT);
             $pointData['email'] = 'info@' . strtolower(str_replace(' ', '', $pointData['name'])) . '.es';

@@ -33,21 +33,20 @@ class PointController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
-            'city' => 'nullable|string|max:255',
-            'point_type' => 'required|string|max:50',
-            'place_type' => 'sometimes|nullable|string|max:50',
-            'name' => 'required|string|max:100|min:3',
+            'city' => 'required|string|max:255',
+            'place_type' => 'nullable|string|max:50',
+            'name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
             'way' => 'nullable|string|max:255',
-            'email' => 'sometimes|nullable|email|max:255',
-            'region' => 'sometimes|nullable|string|max:100',
-            'country' => 'sometimes|nullable|string|max:100',
-            'postcode' => 'sometimes|nullable|string|max:20',
-            'description' => 'sometimes|nullable|string|max:255',
-            'url' => 'sometimes|nullable|string|max:255',
-            'type_ids' => 'sometimes|array',
-            'type_ids.*' => 'integer|exists:types,id',
+            'email' => 'nullable|email|max:255',
+            'region' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'postcode' => 'nullable|string|max:20',
+            'description' => 'nullable|string|max:255',
+            'url' => 'nullable|string|max:255',
+            'type_ids' => 'required|array|min:1',
+            'type_ids.*' => 'exists:types,id',
         ]);
 
         if ($fields['place_type'] == 'continental_marine' && $fields['way'] == 'continental_marine'
@@ -75,7 +74,8 @@ class PointController extends Controller implements HasMiddleware
      */
     public function show(Point $point)
     {
-        return ['point' => $point, 'user' => $point->user];
+        $point->load(['types', 'user']);
+        return ['point' => $point];
     }
 
     /**
@@ -95,20 +95,19 @@ class PointController extends Controller implements HasMiddleware
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
             'city' => 'required|string|max:255',
-            'point_type' => 'sometimes|nullable|string|max:50',
-            'place_type' => 'sometimes|nullable|string|max:50',
-            'name' => 'sometimes|nullable|string|max:100',
+            'place_type' => 'nullable|string|max:50',
+            'name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
             'way' => 'nullable|string|max:255',
-            'email' => 'sometimes|nullable|email|max:255',
-            'region' => 'sometimes|nullable|string|max:100',
-            'country' => 'sometimes|nullable|string|max:100',
-            'postcode' => 'sometimes|nullable|string|max:20',
-            'description' => 'sometimes|nullable|string|max:255',
-            'url' => 'sometimes|nullable|string|max:255',
-            'type_ids' => 'sometimes|array',
-            'type_ids.*' => 'integer|exists:types,id',
+            'email' => 'nullable|email|max:255',
+            'region' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'postcode' => 'nullable|string|max:20',
+            'description' => 'nullable|string|max:255',
+            'url' => 'nullable|string|max:255',
+            'type_ids' => 'required|array|min:1',
+            'type_ids.*' => 'exists:types,id',
         ]);
 
     $point->update($fields);
@@ -189,8 +188,17 @@ class PointController extends Controller implements HasMiddleware
             }
 
             // Filtro por tipo de punto
-            if (isset($filters['point_type'])) {
-                $query->where('point_type', $filters['point_type']);
+            if (!empty($filters['types']) && is_array($filters['types'])) {
+                $typeIds = array_filter(array_map('intval', $filters['types']));
+                
+                if (!empty($typeIds)) {
+                    // Contar cuántos tipos estamos filtrando
+                    $typesCount = count($typeIds);
+                    
+                    $query->whereHas('types', function($q) use ($typeIds) {
+                        $q->whereIn('types.id', $typeIds);
+                    }, '>=', $typesCount); // Debe tener al menos $typesCount coincidencias
+                }
             }
 
             // Filtro por tipo de lugar
@@ -215,7 +223,6 @@ class PointController extends Controller implements HasMiddleware
 
         switch ($orderBy) {
             case 'name':
-            case 'point_type':
             case 'created_at':
                 $query->orderBy($orderBy, $orderDirection);
                 break;

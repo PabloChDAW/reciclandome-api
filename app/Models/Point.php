@@ -13,7 +13,6 @@ class Point extends Model
     protected $fillable = [
         'latitude',
         'longitude',
-        'point_type',
         'place_type',
         'name',
         'address',
