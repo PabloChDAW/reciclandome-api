@@ -27,7 +27,19 @@ class PointSeeder extends Seeder
 
         // Obtener todos los tipos
         $types = Type::all();
-        $pointTypes = ['Plásticos', 'Vidrios', 'Aceites', 'Orgánica', 'Electrónicos', 'Textiles', 'Neumáticos', 'Chatarra', 'Construcción'];
+        $pointTypes = ['Plásticos', 'Vidrios', 'Aceites', 'Orgánica', 'Electrónicos', 
+        'Textiles', 'Neumáticos', 'Chatarra', 'Construcción'];
+
+        $placeTypes = [
+        'address', 'road', 'municipal_district', 
+        'locality', 'municipality', 'region',
+        'country', 'postcode', 'place'
+        ];
+
+        $ways = [
+            'road', 'street', 'admin_area',
+            'subregion', 'county', 'place'
+        ];
 
         // Puntos de reciclaje reales distribuidos por España
         $points = [
@@ -169,13 +181,18 @@ class PointSeeder extends Seeder
         foreach ($points as $index => $pointData) {
             // Agregar campos adicionales
             $pointData['country'] = 'España';
-            $pointData['place_type'] = ['address', 'poi', 'locality', 'neighborhood'][array_rand(['address', 'poi', 'locality', 'neighborhood'])];
-            $pointData['way'] = ['street', 'road', 'avenue'][array_rand(['street', 'road', 'avenue'])];
+            $pointData['place_type'] = $placeTypes[array_rand($placeTypes)];
+            $pointData['way'] = $ways[array_rand($ways)];
+
             $pointData['point_type'] = $pointTypes[array_rand($pointTypes)];
             $pointData['description'] = 'Centro de reciclaje municipal para la gestión de residuos urbanos';
             $pointData['phone'] = '9' . str_pad(rand(10000000, 99999999), 8, '0', STR_PAD_LEFT);
             $pointData['email'] = 'info@' . strtolower(str_replace(' ', '', $pointData['name'])) . '.es';
-            $pointData['url'] = strtolower(str_replace([' ', 'ñ', 'á', 'é', 'í', 'ó', 'ú'], ['-', 'n', 'a', 'e', 'i', 'o', 'u'], $pointData['name'])) . '-' . $pointData['latitude'] . '-' . $pointData['longitude'];
+
+            $latitude = (float) $pointData['latitude'];
+            $longitude = (float) $pointData['longitude'];
+            $baseUrl = 'https://www.google.com/maps/dir/?api=1&destination=';
+            $pointData['url'] = "{$baseUrl}{$latitude},{$longitude}";
 
             // Crear el punto
             $point = $admin->points()->create($pointData);
@@ -183,6 +200,7 @@ class PointSeeder extends Seeder
             // Asignar tipos aleatorios (1-3 tipos por punto)
             $randomTypes = $types->random(rand(1, 3));
             $point->types()->attach($randomTypes->pluck('id'));
+            
         }
     }
 }
