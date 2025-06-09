@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
 
-            $table->string('point_type');
             $table->string('place_type')->nullable();
             $table->string('name')->nullable();
 

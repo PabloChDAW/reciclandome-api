@@ -17,6 +17,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 // Las rutas necesarias para un CRUD completo (listarlas con `php artisan route:list`)
+Route::get('/points/filter', [PointController::class, 'filter']);
 Route::apiResource('points', PointController::class);
 
 // Rutas para la autenticación con Sanctum

@@ -14,7 +14,7 @@ class PointController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum', except: ['index', 'show'])
+            new Middleware('auth:sanctum', except: ['index', 'show', 'filter'])
         ];
     }
 
@@ -33,21 +33,20 @@ class PointController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
-            'city' => 'nullable|string|max:255',
-            'point_type' => 'required|string|max:50',
-            'place_type' => 'sometimes|nullable|string|max:50',
-            'name' => 'required|string|max:100|min:3',
+            'city' => 'required|string|max:255',
+            'place_type' => 'nullable|string|max:50',
+            'name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
             'way' => 'nullable|string|max:255',
-            'email' => 'sometimes|nullable|email|max:255',
-            'region' => 'sometimes|nullable|string|max:100',
-            'country' => 'sometimes|nullable|string|max:100',
-            'postcode' => 'sometimes|nullable|string|max:20',
-            'description' => 'sometimes|nullable|string|max:255',
-            'url' => 'sometimes|nullable|string|max:255',
-            'type_ids' => 'sometimes|array',
-            'type_ids.*' => 'integer|exists:types,id',
+            'email' => 'nullable|email|max:255',
+            'region' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'postcode' => 'nullable|string|max:20',
+            'description' => 'nullable|string|max:255',
+            'url' => 'nullable|string|max:255',
+            'types' => 'required|array|min:1',
+            'types.*' => 'exists:types,id',
         ]);
 
         if ($fields['place_type'] == 'continental_marine' && $fields['way'] == 'continental_marine'
@@ -60,8 +59,8 @@ class PointController extends Controller implements HasMiddleware
 
         $point = $request->user()->points()->create($fields);
 
-        if (!empty($fields['type_ids'])) {
-            $point->types()->attach($fields['type_ids']);
+        if (!empty($fields['types'])) {
+            $point->types()->attach($fields['types']);
         }
 
         $point->load(['user', 'types']);
@@ -75,7 +74,8 @@ class PointController extends Controller implements HasMiddleware
      */
     public function show(Point $point)
     {
-        return ['point' => $point, 'user' => $point->user];
+        $point->load(['types', 'user']);
+        return ['point' => $point];
     }
 
     /**
@@ -95,26 +95,25 @@ class PointController extends Controller implements HasMiddleware
             'latitude' => 'required|numeric|min:-90|max:90',
             'longitude' => 'required|numeric|min:-180|max:180',
             'city' => 'required|string|max:255',
-            'point_type' => 'sometimes|nullable|string|max:50',
-            'place_type' => 'sometimes|nullable|string|max:50',
-            'name' => 'sometimes|nullable|string|max:100',
+            'place_type' => 'nullable|string|max:50',
+            'name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
             'way' => 'nullable|string|max:255',
-            'email' => 'sometimes|nullable|email|max:255',
-            'region' => 'sometimes|nullable|string|max:100',
-            'country' => 'sometimes|nullable|string|max:100',
-            'postcode' => 'sometimes|nullable|string|max:20',
-            'description' => 'sometimes|nullable|string|max:255',
-            'url' => 'sometimes|nullable|string|max:255',
-            'type_ids' => 'sometimes|array',
-            'type_ids.*' => 'integer|exists:types,id',
+            'email' => 'nullable|email|max:255',
+            'region' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'postcode' => 'nullable|string|max:20',
+            'description' => 'nullable|string|max:255',
+            'url' => 'nullable|string|max:255',
+            'types' => 'required|array|min:1',
+            'types.*' => 'exists:types,id',
         ]);
 
     $point->update($fields);
 
-    if (isset($fields['type_ids'])) {
-        $point->types()->sync($fields['type_ids']);
+    if (isset($fields['types'])) {
+        $point->types()->sync($fields['types']);
     }
 
     $point->load(['user','types']);
@@ -138,4 +137,114 @@ class PointController extends Controller implements HasMiddleware
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
+
+    /**
+     * Filtra y ordena puntos con múltiples criterios
+     *
+     * Parámetros aceptados:
+     * - filters: city, point_type, place_type, name, way
+     * - order_by: name, type (point_type), created_at
+     * - order_direction: asc, desc (opcional, default: asc)
+     *
+     * Ejemplos:
+     * /api/points/filter?filters[city]=Madrid&order_by=name&order_direction=desc
+     * /api/points/filter?filters[point_type]=recycling&filters[way]=street
+     */
+    public function filter(Request $request)
+    {
+        $query = Point::query()->with(['user', 'types']);
+
+        $filters = $request->input('filters');
+        if (is_string($filters)) {
+            $filters = json_decode($filters, true);
+        }
+        // Aplicar filtros
+        if ($filters && is_array($filters)) {
+            if (isset($filters['user']) && $filters['user'] === 'me') {
+                $token = $request->bearerToken();
+
+                if (!$token) {
+                    return response()->json(['error' => 'Token requerido para filtrar por usuario'], 401);
+                }
+
+                try {
+                    // Obtiene el usuario desde el token manualmente
+                    $user = \Laravel\Sanctum\PersonalAccessToken::findToken($token)?->tokenable;
+
+                    if (!$user) {
+                        return response()->json(['error' => 'Token inválido'], 401);
+                    }
+
+                    $query->where('user_id', $user->id);
+
+                } catch (\Exception $e) {
+                    return response()->json(['error' => 'Error de autenticación'], 401);
+                }
+            }
+
+            // Filtro por ciudad (búsqueda parcial)
+            if (isset($filters['city'])) {
+                $query->where('city', 'like', '%'.$filters['city'].'%');
+            }
+
+            // Filtro por tipo de punto
+            if (!empty($filters['types']) && is_array($filters['types'])) {
+                $typeIds = array_filter(array_map('intval', $filters['types']));
+                
+                if (!empty($typeIds)) {
+                    // Contar cuántos tipos estamos filtrando
+                    $typesCount = count($typeIds);
+                    
+                    $query->whereHas('types', function($q) use ($typeIds) {
+                        $q->whereIn('types.id', $typeIds);
+                    }, '>=', $typesCount); // Debe tener al menos $typesCount coincidencias
+                }
+            }
+
+            // Filtro por tipo de lugar
+            if (isset($filters['place_type'])) {
+                $query->where('place_type', $filters['place_type']);
+            }
+
+            // Filtro por nombre (búsqueda parcial)
+            if (isset($filters['name'])) {
+                $query->where('name', 'like', '%'.$filters['name'].'%');
+            }
+
+            // Filtro por vía
+            if (isset($filters['way'])) {
+                $query->where('way', $filters['way']);
+            }
+        }
+
+        // Aplicar ordenación
+        $orderBy = $request->input('order_by', 'created_at');
+        $orderDirection = $request->input('order_direction', 'desc');
+
+        switch ($orderBy) {
+            case 'name':
+            case 'created_at':
+                $query->orderBy($orderBy, $orderDirection);
+                break;
+            case 'types':
+            $query->orderBy(
+                \DB::table('point_type')
+                    ->join('types', 'point_type.type_id', '=', 'types.id')
+                    ->select('types.name')
+                    ->whereColumn('point_type.point_id', 'points.id')
+                    ->orderBy('types.name')
+                    ->limit(1),
+                $orderDirection
+            );
+            break;
+            case 'date': // alias para created_at
+                $query->orderBy('created_at', $orderDirection);
+                break;
+            default:
+                $query->latest();
+        }
+
+        return $query->get();
+    }
+
 }
