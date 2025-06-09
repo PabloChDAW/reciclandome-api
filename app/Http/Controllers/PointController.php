@@ -45,8 +45,8 @@ class PointController extends Controller implements HasMiddleware
             'postcode' => 'nullable|string|max:20',
             'description' => 'nullable|string|max:255',
             'url' => 'nullable|string|max:255',
-            'type_ids' => 'required|array|min:1',
-            'type_ids.*' => 'exists:types,id',
+            'types' => 'required|array|min:1',
+            'types.*' => 'exists:types,id',
         ]);
 
         if ($fields['place_type'] == 'continental_marine' && $fields['way'] == 'continental_marine'
@@ -59,8 +59,8 @@ class PointController extends Controller implements HasMiddleware
 
         $point = $request->user()->points()->create($fields);
 
-        if (!empty($fields['type_ids'])) {
-            $point->types()->attach($fields['type_ids']);
+        if (!empty($fields['types'])) {
+            $point->types()->attach($fields['types']);
         }
 
         $point->load(['user', 'types']);
@@ -106,14 +106,14 @@ class PointController extends Controller implements HasMiddleware
             'postcode' => 'nullable|string|max:20',
             'description' => 'nullable|string|max:255',
             'url' => 'nullable|string|max:255',
-            'type_ids' => 'required|array|min:1',
-            'type_ids.*' => 'exists:types,id',
+            'types' => 'required|array|min:1',
+            'types.*' => 'exists:types,id',
         ]);
 
     $point->update($fields);
 
-    if (isset($fields['type_ids'])) {
-        $point->types()->sync($fields['type_ids']);
+    if (isset($fields['types'])) {
+        $point->types()->sync($fields['types']);
     }
 
     $point->load(['user','types']);
