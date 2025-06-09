@@ -14,7 +14,7 @@ class PointController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum', except: ['index', 'show'])
+            new Middleware('auth:sanctum', except: ['index', 'show', 'filter'])
         ];
     }
 
@@ -138,4 +138,98 @@ class PointController extends Controller implements HasMiddleware
 
         return ['message' => 'El punto ha sido eliminado.'];
     }
+
+    /**
+     * Filtra y ordena puntos con múltiples criterios
+     *
+     * Parámetros aceptados:
+     * - filters: city, point_type, place_type, name, way
+     * - order_by: name, type (point_type), created_at
+     * - order_direction: asc, desc (opcional, default: asc)
+     *
+     * Ejemplos:
+     * /api/points/filter?filters[city]=Madrid&order_by=name&order_direction=desc
+     * /api/points/filter?filters[point_type]=recycling&filters[way]=street
+     */
+    public function filter(Request $request)
+    {
+        $query = Point::query()->with(['user', 'types']);
+
+        $filters = $request->input('filters');
+        if (is_string($filters)) {
+            $filters = json_decode($filters, true);
+        }
+        // Aplicar filtros
+        if ($filters && is_array($filters)) {
+            if (isset($filters['user']) && $filters['user'] === 'me') {
+                $token = $request->bearerToken();
+
+                if (!$token) {
+                    return response()->json(['error' => 'Token requerido para filtrar por usuario'], 401);
+                }
+
+                try {
+                    // Obtiene el usuario desde el token manualmente
+                    $user = \Laravel\Sanctum\PersonalAccessToken::findToken($token)?->tokenable;
+
+                    if (!$user) {
+                        return response()->json(['error' => 'Token inválido'], 401);
+                    }
+
+                    $query->where('user_id', $user->id);
+
+                } catch (\Exception $e) {
+                    return response()->json(['error' => 'Error de autenticación'], 401);
+                }
+            }
+
+            // Filtro por ciudad (búsqueda parcial)
+            if (isset($filters['city'])) {
+                $query->where('city', 'like', '%'.$filters['city'].'%');
+            }
+
+            // Filtro por tipo de punto
+            if (isset($filters['point_type'])) {
+                $query->where('point_type', $filters['point_type']);
+            }
+
+            // Filtro por tipo de lugar
+            if (isset($filters['place_type'])) {
+                $query->where('place_type', $filters['place_type']);
+            }
+
+            // Filtro por nombre (búsqueda parcial)
+            if (isset($filters['name'])) {
+                $query->where('name', 'like', '%'.$filters['name'].'%');
+            }
+
+            // Filtro por vía
+            if (isset($filters['way'])) {
+                $query->where('way', $filters['way']);
+            }
+        }
+
+        // Aplicar ordenación
+        $orderBy = $request->input('order_by', 'created_at');
+        $orderDirection = $request->input('order_direction', 'desc');
+
+        switch ($orderBy) {
+            case 'name':
+            case 'point_type':
+            case 'created_at':
+                $query->orderBy($orderBy, $orderDirection);
+                break;
+            case 'type': // alias para point_type
+                $query->orderBy('point_type', $orderDirection);
+                break;
+            case 'date': // alias para created_at
+                $query->orderBy('created_at', $orderDirection);
+                break;
+            default:
+                $query->latest();
+        }
+
+        return $query->get();
+    }
+
 }
