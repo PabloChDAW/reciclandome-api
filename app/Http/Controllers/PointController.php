@@ -226,13 +226,17 @@ class PointController extends Controller implements HasMiddleware
             case 'created_at':
                 $query->orderBy($orderBy, $orderDirection);
                 break;
-            case 'types': // alias para point_type
-                $query->join('point_type', 'points.id', '=', 'point_type.point_id')
+            case 'types':
+            $query->orderBy(
+                \DB::table('point_type')
                     ->join('types', 'point_type.type_id', '=', 'types.id')
-                    ->orderBy('types.name', $orderDirection)
-                    ->select('points.*')
-                    ->distinct();
-                break;
+                    ->select('types.name')
+                    ->whereColumn('point_type.point_id', 'points.id')
+                    ->orderBy('types.name')
+                    ->limit(1),
+                $orderDirection
+            );
+            break;
             case 'date': // alias para created_at
                 $query->orderBy('created_at', $orderDirection);
                 break;
