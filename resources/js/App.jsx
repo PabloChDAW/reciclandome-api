@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Layout from './Pages/Layout';
 import HomePage from './Pages/HomePage';
@@ -36,7 +36,7 @@ export default function App() {
   const { user } = useContext(AppContext);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ScrollToTop />
       <div className="bg-[#f7f7f7]">
       <Routes>
@@ -76,6 +76,6 @@ export default function App() {
         </Route>
       </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
